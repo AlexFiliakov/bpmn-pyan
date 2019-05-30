@@ -1,3 +1,5 @@
+Would like to adapt this to generate BPMN diagram templates for Domain Programming, still have to think this through...
+
 # Pyan3: Offline call graph generator for Python 3
 
 Generate approximate call graphs for Python programs.
