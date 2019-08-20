@@ -1,0 +1,1249 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.6.3" />
+<title>pyan.writers API documentation</title>
+<meta name="description" content="Graph markup writers." />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{font-weight:bold}#index h4 + ul{margin-bottom:.6em}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase;cursor:pointer}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>pyan.writers</code></h1>
+</header>
+<section id="section-intro">
+<p>Graph markup writers.</p>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+&#34;&#34;&#34;Graph markup writers.&#34;&#34;&#34;
+
+import sys
+import logging
+
+
+class Writer(object):
+    def __init__(self, graph, output=None, logger=None, tabstop=4):
+        self.graph = graph
+        self.output = output
+        self.logger = logger or logging.getLogger(__name__)
+        self.indent_level = 0
+        self.tabstop = tabstop*&#39; &#39;
+
+    def log(self, msg):
+        self.logger.info(msg)
+
+    def indent(self, level=1):
+        self.indent_level += level
+
+    def dedent(self, level=1):
+        self.indent_level -= level
+
+    def write(self, line):
+        self.outstream.write(self.tabstop*self.indent_level+line+&#39;\n&#39;)
+
+    def run(self):
+        self.log(&#39;%s running&#39; % type(self))
+        try:
+            self.outstream = open(self.output, &#39;w&#39;)
+        except TypeError:
+            self.outstream = sys.stdout
+        self.start_graph()
+        self.write_subgraph(self.graph)
+        self.write_edges()
+        self.finish_graph()
+        if self.output:
+            self.outstream.close()
+
+    def write_subgraph(self, graph):
+        self.start_subgraph(graph)
+        for node in graph.nodes:
+            self.write_node(node)
+        for subgraph in graph.subgraphs:
+            self.write_subgraph(subgraph)
+        self.finish_subgraph(graph)
+
+    def write_edges(self):
+        self.start_edges()
+        for edge in self.graph.edges:
+            self.write_edge(edge)
+        self.finish_edges()
+
+    def start_graph(self):
+        pass
+
+    def start_subgraph(self, graph):
+        pass
+
+    def write_node(self, node):
+        pass
+
+    def start_edges(self):
+        pass
+
+    def write_edge(self, edge):
+        pass
+
+    def finish_edges(self):
+        pass
+
+    def finish_subgraph(self, graph):
+        pass
+
+    def finish_graph(self):
+        pass
+
+
+class TgfWriter(Writer):
+    def __init__(self, graph, output=None, logger=None):
+        Writer.__init__(
+                self, graph,
+                output=output,
+                logger=logger)
+        self.i = 1
+        self.id_map = {}
+
+    def write_node(self, node):
+        self.write(&#39;%d %s&#39; % (self.i, node.label))
+        self.id_map[node] = self.i
+        self.i += 1
+
+    def start_edges(self):
+        self.write(&#39;#&#39;)
+
+    def write_edge(self, edge):
+        flavor = &#39;U&#39; if edge.flavor == &#39;uses&#39; else &#39;D&#39;
+        self.write(
+                &#39;%s %s %s&#39; %
+                (self.id_map[edge.source], self.id_map[edge.target], flavor))
+
+
+class DotWriter(Writer):
+    def __init__(self, graph,
+                 options=None, output=None, logger=None, tabstop=4):
+        Writer.__init__(
+                self, graph,
+                output=output,
+                logger=logger,
+                tabstop=tabstop)
+        options = options or []
+        if graph.grouped:
+            options += [&#39;clusterrank=&#34;local&#34;&#39;]
+        self.options = &#39;, &#39;.join(options)
+        self.grouped = graph.grouped
+
+    def start_graph(self):
+        self.write(&#39;digraph G {&#39;)
+        self.write(&#39;    graph [&#39; + self.options + &#39;];&#39;)
+        self.indent()
+
+    def start_subgraph(self, graph):
+        self.log(&#39;Start subgraph %s&#39; % graph.label)
+        # Name must begin with &#34;cluster&#34; to be recognized as a cluster by GraphViz.
+        self.write(
+                &#34;subgraph cluster_%s {\n&#34; % graph.id)
+        self.indent()
+
+        # translucent gray (no hue to avoid visual confusion with any
+        # group of colored nodes)
+        self.write(
+            &#39;graph [style=&#34;filled,rounded&#34;,&#39;
+            &#39;fillcolor=&#34;#80808018&#34;, label=&#34;%s&#34;];&#39;
+            % graph.label)
+
+    def finish_subgraph(self, graph):
+        self.log(&#39;Finish subgraph %s&#39; % graph.label)
+        # terminate previous subgraph
+        self.dedent()
+        self.write(&#39;}&#39;)
+
+    def write_node(self, node):
+        self.log(&#39;Write node %s&#39; % node.label)
+        self.write(
+            &#39;%s [label=&#34;%s&#34;, style=&#34;filled&#34;, fillcolor=&#34;%s&#34;,&#39;
+            &#39; fontcolor=&#34;%s&#34;, group=&#34;%s&#34;];&#39;
+            % (
+                node.id, node.label,
+                node.fill_color, node.text_color, node.group))
+
+    def write_edge(self, edge):
+        source = edge.source
+        target = edge.target
+        color  = edge.color
+        if edge.flavor == &#39;defines&#39;:
+            self.write(
+                &#39;    %s -&gt; %s [style=&#34;dashed&#34;,&#39;
+                &#39; color=&#34;%s&#34;];&#39;
+                % (source.id, target.id, color))
+        else: # edge.flavor == &#39;uses&#39;:
+            self.write(
+                &#39;    %s -&gt; %s [style=&#34;solid&#34;,&#39;
+                &#39; color=&#34;%s&#34;];&#39;
+                % (source.id, target.id, color))
+
+    def finish_graph(self):
+        self.write(&#39;}&#39;)  # terminate &#34;digraph G {&#34;
+
+
+class YedWriter(Writer):
+    def __init__(self, graph, output=None, logger=None, tabstop=2):
+        Writer.__init__(
+                self, graph,
+                output=output,
+                logger=logger,
+                tabstop=tabstop)
+        self.grouped = graph.grouped
+        self.indent_level = 0
+        self.edge_id = 0
+
+    def start_graph(self):
+        self.write(&#39;&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34; standalone=&#34;no&#34;?&gt;&#39;)
+        self.write(
+                &#39;&lt;graphml xmlns=&#34;http://graphml.graphdrawing.org/xmlns&#34;&#39;
+                &#39; xmlns:java=&#39;
+                &#39;&#34;http://www.yworks.com/xml/yfiles-common/1.0/java&#34;&#39;
+                &#39; xmlns:sys=&#39;
+                &#39;&#34;http://www.yworks.com/xml/yfiles-common/markup/primitives&#39;
+                &#39;/2.0&#34; xmlns:x=&#34;http://www.yworks.com/xml/yfiles-common/&#39;
+                &#39;markup/2.0&#34; xmlns:xsi=&#34;http://www.w3.org/2001/&#39;
+                &#39;XMLSchema-instance&#34; xmlns:y=&#34;http://www.yworks.com/xml/&#39;
+                &#39;graphml&#34; xmlns:yed=&#34;http://www.yworks.com/xml/yed/3&#34;&#39;
+                &#39; xsi:schemaLocation=&#34;http://graphml.graphdrawing.org/xmlns&#39;
+                &#39; http://www.yworks.com/xml/schema/graphml/1.1/&#39;
+                &#39;ygraphml.xsd&#34;&gt;&#39;)
+        self.indent()
+        self.write(&#39;&lt;key for=&#34;node&#34; id=&#34;d0&#34; yfiles.type=&#34;nodegraphics&#34;/&gt;&#39;)
+        self.write(&#39;&lt;key for=&#34;edge&#34; id=&#34;d1&#34; yfiles.type=&#34;edgegraphics&#34;/&gt;&#39;)
+        self.write(&#39;&lt;graph edgedefault=&#34;directed&#34; id=&#34;Graph&#34;&gt;&#39;)
+        self.indent()
+
+    def start_subgraph(self, graph):
+        self.log(&#39;Start subgraph %s&#39; % graph.label)
+
+        self.write(&#39;&lt;node id=&#34;%s:&#34; yfiles.foldertype=&#34;group&#34;&gt;&#39; % graph.id)
+        self.indent()
+        self.write(&#39;&lt;data key=&#34;d0&#34;&gt;&#39;)
+        self.indent()
+        self.write(&#39;&lt;y:ProxyAutoBoundsNode&gt;&#39;)
+        self.indent()
+        self.write(&#39;&lt;y:Realizers active=&#34;0&#34;&gt;&#39;)
+        self.indent()
+        self.write(&#39;&lt;y:GroupNode&gt;&#39;)
+        self.indent()
+        self.write(&#39;&lt;y:Fill color=&#34;#CCCCCC&#34; transparent=&#34;false&#34;/&gt;&#39;)
+        self.write(&#39;&lt;y:NodeLabel modelName=&#34;internal&#34; modelPosition=&#34;t&#34; &#39;
+                   &#39;alignment=&#34;right&#34;&gt;%s&lt;/y:NodeLabel&gt;&#39;
+                   % graph.label)
+        self.write(&#39;&lt;y:Shape type=&#34;roundrectangle&#34;/&gt;&#39;)
+        self.dedent()
+        self.write(&#39;&lt;/y:GroupNode&gt;&#39;)
+        self.dedent()
+        self.write(&#39;&lt;/y:Realizers&gt;&#39;)
+        self.dedent()
+        self.write(&#39;&lt;/y:ProxyAutoBoundsNode&gt;&#39;)
+        self.dedent()
+        self.write(&#39;&lt;/data&gt;&#39;)
+        self.write(&#39;&lt;graph edgedefault=&#34;directed&#34; id=&#34;%s::&#34;&gt;&#39; % graph.id)
+        self.indent()
+
+    def finish_subgraph(self, graph):
+        self.log(&#39;Finish subgraph %s&#39; % graph.label)
+        self.dedent()
+        self.write(&#39;&lt;/graph&gt;&#39;)
+        self.dedent()
+        self.write(&#39;&lt;/node&gt;&#39;)
+
+    def write_node(self, node):
+        self.log(&#39;Write node %s&#39; % node.label)
+        width = 20 + 10*len(node.label)
+        self.write(&#39;&lt;node id=&#34;%s&#34;&gt;&#39; % node.id)
+        self.indent()
+        self.write(&#39;&lt;data key=&#34;d0&#34;&gt;&#39;)
+        self.indent()
+        self.write(&#39;&lt;y:ShapeNode&gt;&#39;)
+        self.indent()
+        self.write(&#39;&lt;y:Geometry height=&#34;%s&#34; width=&#34;%s&#34;/&gt;&#39; % (&#34;30&#34;, width))
+        self.write(&#39;&lt;y:Fill color=&#34;%s&#34; transparent=&#34;false&#34;/&gt;&#39;
+                   % node.fill_color)
+        self.write(&#39;&lt;y:BorderStyle color=&#34;#000000&#34; type=&#34;line&#34; &#39;
+                   &#39;width=&#34;1.0&#34;/&gt;&#39;)
+        self.write(&#39;&lt;y:NodeLabel&gt;%s&lt;/y:NodeLabel&gt;&#39;
+                   % node.label)
+        self.write(&#39;&lt;y:Shape type=&#34;ellipse&#34;/&gt;&#39;)
+        self.dedent()
+        self.write(&#39;&lt;/y:ShapeNode&gt;&#39;)
+        self.dedent()
+        self.write(&#39;&lt;/data&gt;&#39;)
+        self.dedent()
+        self.write(&#39;&lt;/node&gt;&#39;)
+
+    def write_edge(self, edge):
+        self.edge_id += 1
+        source = edge.source
+        target = edge.target
+        self.write(
+                &#39;&lt;edge id=&#34;%s&#34; source=&#34;%s&#34; target=&#34;%s&#34;&gt;&#39;
+                % (self.edge_id, source.id, target.id))
+        self.indent()
+        self.write(&#39;&lt;data key=&#34;d1&#34;&gt;&#39;)
+        self.indent()
+        self.write(&#39;&lt;y:PolyLineEdge&gt;&#39;)
+        self.indent()
+        if edge.flavor == &#39;defines&#39;:
+            self.write(&#39;&lt;y:LineStyle color=&#34;%s&#34; &#39;
+                       &#39;type=&#34;dashed&#34; width=&#34;1.0&#34;/&gt;&#39;
+                       % edge.color)
+        else:
+            self.write(&#39;&lt;y:LineStyle color=&#34;%s&#34; &#39;
+                       &#39;type=&#34;line&#34; width=&#34;1.0&#34;/&gt;&#39;
+                       % edge.color)
+        self.write(&#39;&lt;y:Arrows source=&#34;none&#34; target=&#34;standard&#34;/&gt;&#39;)
+        self.write(&#39;&lt;y:BendStyle smoothed=&#34;true&#34;/&gt;&#39;)
+        self.dedent()
+        self.write(&#39;&lt;/y:PolyLineEdge&gt;&#39;)
+        self.dedent()
+        self.write(&#39;&lt;/data&gt;&#39;)
+        self.dedent()
+        self.write(&#39;&lt;/edge&gt;&#39;)
+
+    def finish_graph(self):
+        self.dedent(2)
+        self.write(&#39;  &lt;/graph&gt;&#39;)
+        self.dedent()
+        self.write(&#39;&lt;/graphml&gt;&#39;)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="pyan.writers.DotWriter"><code class="flex name class">
+<span>class <span class="ident">DotWriter</span></span>
+<span>(</span><span>graph, options=None, output=None, logger=None, tabstop=4)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">class DotWriter(Writer):
+    def __init__(self, graph,
+                 options=None, output=None, logger=None, tabstop=4):
+        Writer.__init__(
+                self, graph,
+                output=output,
+                logger=logger,
+                tabstop=tabstop)
+        options = options or []
+        if graph.grouped:
+            options += [&#39;clusterrank=&#34;local&#34;&#39;]
+        self.options = &#39;, &#39;.join(options)
+        self.grouped = graph.grouped
+
+    def start_graph(self):
+        self.write(&#39;digraph G {&#39;)
+        self.write(&#39;    graph [&#39; + self.options + &#39;];&#39;)
+        self.indent()
+
+    def start_subgraph(self, graph):
+        self.log(&#39;Start subgraph %s&#39; % graph.label)
+        # Name must begin with &#34;cluster&#34; to be recognized as a cluster by GraphViz.
+        self.write(
+                &#34;subgraph cluster_%s {\n&#34; % graph.id)
+        self.indent()
+
+        # translucent gray (no hue to avoid visual confusion with any
+        # group of colored nodes)
+        self.write(
+            &#39;graph [style=&#34;filled,rounded&#34;,&#39;
+            &#39;fillcolor=&#34;#80808018&#34;, label=&#34;%s&#34;];&#39;
+            % graph.label)
+
+    def finish_subgraph(self, graph):
+        self.log(&#39;Finish subgraph %s&#39; % graph.label)
+        # terminate previous subgraph
+        self.dedent()
+        self.write(&#39;}&#39;)
+
+    def write_node(self, node):
+        self.log(&#39;Write node %s&#39; % node.label)
+        self.write(
+            &#39;%s [label=&#34;%s&#34;, style=&#34;filled&#34;, fillcolor=&#34;%s&#34;,&#39;
+            &#39; fontcolor=&#34;%s&#34;, group=&#34;%s&#34;];&#39;
+            % (
+                node.id, node.label,
+                node.fill_color, node.text_color, node.group))
+
+    def write_edge(self, edge):
+        source = edge.source
+        target = edge.target
+        color  = edge.color
+        if edge.flavor == &#39;defines&#39;:
+            self.write(
+                &#39;    %s -&gt; %s [style=&#34;dashed&#34;,&#39;
+                &#39; color=&#34;%s&#34;];&#39;
+                % (source.id, target.id, color))
+        else: # edge.flavor == &#39;uses&#39;:
+            self.write(
+                &#39;    %s -&gt; %s [style=&#34;solid&#34;,&#39;
+                &#39; color=&#34;%s&#34;];&#39;
+                % (source.id, target.id, color))
+
+    def finish_graph(self):
+        self.write(&#39;}&#39;)  # terminate &#34;digraph G {&#34;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="pyan.writers.Writer" href="#pyan.writers.Writer">Writer</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="pyan.writers.DotWriter.finish_graph"><code class="name flex">
+<span>def <span class="ident">finish_graph</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def finish_graph(self):
+    self.write(&#39;}&#39;)  # terminate &#34;digraph G {&#34;</code></pre>
+</details>
+</dd>
+<dt id="pyan.writers.DotWriter.finish_subgraph"><code class="name flex">
+<span>def <span class="ident">finish_subgraph</span></span>(<span>self, graph)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def finish_subgraph(self, graph):
+    self.log(&#39;Finish subgraph %s&#39; % graph.label)
+    # terminate previous subgraph
+    self.dedent()
+    self.write(&#39;}&#39;)</code></pre>
+</details>
+</dd>
+<dt id="pyan.writers.DotWriter.start_graph"><code class="name flex">
+<span>def <span class="ident">start_graph</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def start_graph(self):
+    self.write(&#39;digraph G {&#39;)
+    self.write(&#39;    graph [&#39; + self.options + &#39;];&#39;)
+    self.indent()</code></pre>
+</details>
+</dd>
+<dt id="pyan.writers.DotWriter.start_subgraph"><code class="name flex">
+<span>def <span class="ident">start_subgraph</span></span>(<span>self, graph)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def start_subgraph(self, graph):
+    self.log(&#39;Start subgraph %s&#39; % graph.label)
+    # Name must begin with &#34;cluster&#34; to be recognized as a cluster by GraphViz.
+    self.write(
+            &#34;subgraph cluster_%s {\n&#34; % graph.id)
+    self.indent()
+
+    # translucent gray (no hue to avoid visual confusion with any
+    # group of colored nodes)
+    self.write(
+        &#39;graph [style=&#34;filled,rounded&#34;,&#39;
+        &#39;fillcolor=&#34;#80808018&#34;, label=&#34;%s&#34;];&#39;
+        % graph.label)</code></pre>
+</details>
+</dd>
+<dt id="pyan.writers.DotWriter.write_edge"><code class="name flex">
+<span>def <span class="ident">write_edge</span></span>(<span>self, edge)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def write_edge(self, edge):
+    source = edge.source
+    target = edge.target
+    color  = edge.color
+    if edge.flavor == &#39;defines&#39;:
+        self.write(
+            &#39;    %s -&gt; %s [style=&#34;dashed&#34;,&#39;
+            &#39; color=&#34;%s&#34;];&#39;
+            % (source.id, target.id, color))
+    else: # edge.flavor == &#39;uses&#39;:
+        self.write(
+            &#39;    %s -&gt; %s [style=&#34;solid&#34;,&#39;
+            &#39; color=&#34;%s&#34;];&#39;
+            % (source.id, target.id, color))</code></pre>
+</details>
+</dd>
+<dt id="pyan.writers.DotWriter.write_node"><code class="name flex">
+<span>def <span class="ident">write_node</span></span>(<span>self, node)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def write_node(self, node):
+    self.log(&#39;Write node %s&#39; % node.label)
+    self.write(
+        &#39;%s [label=&#34;%s&#34;, style=&#34;filled&#34;, fillcolor=&#34;%s&#34;,&#39;
+        &#39; fontcolor=&#34;%s&#34;, group=&#34;%s&#34;];&#39;
+        % (
+            node.id, node.label,
+            node.fill_color, node.text_color, node.group))</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="pyan.writers.TgfWriter"><code class="flex name class">
+<span>class <span class="ident">TgfWriter</span></span>
+<span>(</span><span>graph, output=None, logger=None)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">class TgfWriter(Writer):
+    def __init__(self, graph, output=None, logger=None):
+        Writer.__init__(
+                self, graph,
+                output=output,
+                logger=logger)
+        self.i = 1
+        self.id_map = {}
+
+    def write_node(self, node):
+        self.write(&#39;%d %s&#39; % (self.i, node.label))
+        self.id_map[node] = self.i
+        self.i += 1
+
+    def start_edges(self):
+        self.write(&#39;#&#39;)
+
+    def write_edge(self, edge):
+        flavor = &#39;U&#39; if edge.flavor == &#39;uses&#39; else &#39;D&#39;
+        self.write(
+                &#39;%s %s %s&#39; %
+                (self.id_map[edge.source], self.id_map[edge.target], flavor))</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="pyan.writers.Writer" href="#pyan.writers.Writer">Writer</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="pyan.writers.TgfWriter.start_edges"><code class="name flex">
+<span>def <span class="ident">start_edges</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def start_edges(self):
+    self.write(&#39;#&#39;)</code></pre>
+</details>
+</dd>
+<dt id="pyan.writers.TgfWriter.write_edge"><code class="name flex">
+<span>def <span class="ident">write_edge</span></span>(<span>self, edge)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def write_edge(self, edge):
+    flavor = &#39;U&#39; if edge.flavor == &#39;uses&#39; else &#39;D&#39;
+    self.write(
+            &#39;%s %s %s&#39; %
+            (self.id_map[edge.source], self.id_map[edge.target], flavor))</code></pre>
+</details>
+</dd>
+<dt id="pyan.writers.TgfWriter.write_node"><code class="name flex">
+<span>def <span class="ident">write_node</span></span>(<span>self, node)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def write_node(self, node):
+    self.write(&#39;%d %s&#39; % (self.i, node.label))
+    self.id_map[node] = self.i
+    self.i += 1</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="pyan.writers.Writer"><code class="flex name class">
+<span>class <span class="ident">Writer</span></span>
+<span>(</span><span>graph, output=None, logger=None, tabstop=4)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">class Writer(object):
+    def __init__(self, graph, output=None, logger=None, tabstop=4):
+        self.graph = graph
+        self.output = output
+        self.logger = logger or logging.getLogger(__name__)
+        self.indent_level = 0
+        self.tabstop = tabstop*&#39; &#39;
+
+    def log(self, msg):
+        self.logger.info(msg)
+
+    def indent(self, level=1):
+        self.indent_level += level
+
+    def dedent(self, level=1):
+        self.indent_level -= level
+
+    def write(self, line):
+        self.outstream.write(self.tabstop*self.indent_level+line+&#39;\n&#39;)
+
+    def run(self):
+        self.log(&#39;%s running&#39; % type(self))
+        try:
+            self.outstream = open(self.output, &#39;w&#39;)
+        except TypeError:
+            self.outstream = sys.stdout
+        self.start_graph()
+        self.write_subgraph(self.graph)
+        self.write_edges()
+        self.finish_graph()
+        if self.output:
+            self.outstream.close()
+
+    def write_subgraph(self, graph):
+        self.start_subgraph(graph)
+        for node in graph.nodes:
+            self.write_node(node)
+        for subgraph in graph.subgraphs:
+            self.write_subgraph(subgraph)
+        self.finish_subgraph(graph)
+
+    def write_edges(self):
+        self.start_edges()
+        for edge in self.graph.edges:
+            self.write_edge(edge)
+        self.finish_edges()
+
+    def start_graph(self):
+        pass
+
+    def start_subgraph(self, graph):
+        pass
+
+    def write_node(self, node):
+        pass
+
+    def start_edges(self):
+        pass
+
+    def write_edge(self, edge):
+        pass
+
+    def finish_edges(self):
+        pass
+
+    def finish_subgraph(self, graph):
+        pass
+
+    def finish_graph(self):
+        pass</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="pyan.writers.TgfWriter" href="#pyan.writers.TgfWriter">TgfWriter</a></li>
+<li><a title="pyan.writers.DotWriter" href="#pyan.writers.DotWriter">DotWriter</a></li>
+<li><a title="pyan.writers.YedWriter" href="#pyan.writers.YedWriter">YedWriter</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="pyan.writers.Writer.dedent"><code class="name flex">
+<span>def <span class="ident">dedent</span></span>(<span>self, level=1)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def dedent(self, level=1):
+    self.indent_level -= level</code></pre>
+</details>
+</dd>
+<dt id="pyan.writers.Writer.finish_edges"><code class="name flex">
+<span>def <span class="ident">finish_edges</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def finish_edges(self):
+    pass</code></pre>
+</details>
+</dd>
+<dt id="pyan.writers.Writer.finish_graph"><code class="name flex">
+<span>def <span class="ident">finish_graph</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def finish_graph(self):
+    pass</code></pre>
+</details>
+</dd>
+<dt id="pyan.writers.Writer.finish_subgraph"><code class="name flex">
+<span>def <span class="ident">finish_subgraph</span></span>(<span>self, graph)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def finish_subgraph(self, graph):
+    pass</code></pre>
+</details>
+</dd>
+<dt id="pyan.writers.Writer.indent"><code class="name flex">
+<span>def <span class="ident">indent</span></span>(<span>self, level=1)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def indent(self, level=1):
+    self.indent_level += level</code></pre>
+</details>
+</dd>
+<dt id="pyan.writers.Writer.log"><code class="name flex">
+<span>def <span class="ident">log</span></span>(<span>self, msg)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def log(self, msg):
+    self.logger.info(msg)</code></pre>
+</details>
+</dd>
+<dt id="pyan.writers.Writer.run"><code class="name flex">
+<span>def <span class="ident">run</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def run(self):
+    self.log(&#39;%s running&#39; % type(self))
+    try:
+        self.outstream = open(self.output, &#39;w&#39;)
+    except TypeError:
+        self.outstream = sys.stdout
+    self.start_graph()
+    self.write_subgraph(self.graph)
+    self.write_edges()
+    self.finish_graph()
+    if self.output:
+        self.outstream.close()</code></pre>
+</details>
+</dd>
+<dt id="pyan.writers.Writer.start_edges"><code class="name flex">
+<span>def <span class="ident">start_edges</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def start_edges(self):
+    pass</code></pre>
+</details>
+</dd>
+<dt id="pyan.writers.Writer.start_graph"><code class="name flex">
+<span>def <span class="ident">start_graph</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def start_graph(self):
+    pass</code></pre>
+</details>
+</dd>
+<dt id="pyan.writers.Writer.start_subgraph"><code class="name flex">
+<span>def <span class="ident">start_subgraph</span></span>(<span>self, graph)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def start_subgraph(self, graph):
+    pass</code></pre>
+</details>
+</dd>
+<dt id="pyan.writers.Writer.write"><code class="name flex">
+<span>def <span class="ident">write</span></span>(<span>self, line)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def write(self, line):
+    self.outstream.write(self.tabstop*self.indent_level+line+&#39;\n&#39;)</code></pre>
+</details>
+</dd>
+<dt id="pyan.writers.Writer.write_edge"><code class="name flex">
+<span>def <span class="ident">write_edge</span></span>(<span>self, edge)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def write_edge(self, edge):
+    pass</code></pre>
+</details>
+</dd>
+<dt id="pyan.writers.Writer.write_edges"><code class="name flex">
+<span>def <span class="ident">write_edges</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def write_edges(self):
+    self.start_edges()
+    for edge in self.graph.edges:
+        self.write_edge(edge)
+    self.finish_edges()</code></pre>
+</details>
+</dd>
+<dt id="pyan.writers.Writer.write_node"><code class="name flex">
+<span>def <span class="ident">write_node</span></span>(<span>self, node)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def write_node(self, node):
+    pass</code></pre>
+</details>
+</dd>
+<dt id="pyan.writers.Writer.write_subgraph"><code class="name flex">
+<span>def <span class="ident">write_subgraph</span></span>(<span>self, graph)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def write_subgraph(self, graph):
+    self.start_subgraph(graph)
+    for node in graph.nodes:
+        self.write_node(node)
+    for subgraph in graph.subgraphs:
+        self.write_subgraph(subgraph)
+    self.finish_subgraph(graph)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="pyan.writers.YedWriter"><code class="flex name class">
+<span>class <span class="ident">YedWriter</span></span>
+<span>(</span><span>graph, output=None, logger=None, tabstop=2)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">class YedWriter(Writer):
+    def __init__(self, graph, output=None, logger=None, tabstop=2):
+        Writer.__init__(
+                self, graph,
+                output=output,
+                logger=logger,
+                tabstop=tabstop)
+        self.grouped = graph.grouped
+        self.indent_level = 0
+        self.edge_id = 0
+
+    def start_graph(self):
+        self.write(&#39;&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34; standalone=&#34;no&#34;?&gt;&#39;)
+        self.write(
+                &#39;&lt;graphml xmlns=&#34;http://graphml.graphdrawing.org/xmlns&#34;&#39;
+                &#39; xmlns:java=&#39;
+                &#39;&#34;http://www.yworks.com/xml/yfiles-common/1.0/java&#34;&#39;
+                &#39; xmlns:sys=&#39;
+                &#39;&#34;http://www.yworks.com/xml/yfiles-common/markup/primitives&#39;
+                &#39;/2.0&#34; xmlns:x=&#34;http://www.yworks.com/xml/yfiles-common/&#39;
+                &#39;markup/2.0&#34; xmlns:xsi=&#34;http://www.w3.org/2001/&#39;
+                &#39;XMLSchema-instance&#34; xmlns:y=&#34;http://www.yworks.com/xml/&#39;
+                &#39;graphml&#34; xmlns:yed=&#34;http://www.yworks.com/xml/yed/3&#34;&#39;
+                &#39; xsi:schemaLocation=&#34;http://graphml.graphdrawing.org/xmlns&#39;
+                &#39; http://www.yworks.com/xml/schema/graphml/1.1/&#39;
+                &#39;ygraphml.xsd&#34;&gt;&#39;)
+        self.indent()
+        self.write(&#39;&lt;key for=&#34;node&#34; id=&#34;d0&#34; yfiles.type=&#34;nodegraphics&#34;/&gt;&#39;)
+        self.write(&#39;&lt;key for=&#34;edge&#34; id=&#34;d1&#34; yfiles.type=&#34;edgegraphics&#34;/&gt;&#39;)
+        self.write(&#39;&lt;graph edgedefault=&#34;directed&#34; id=&#34;Graph&#34;&gt;&#39;)
+        self.indent()
+
+    def start_subgraph(self, graph):
+        self.log(&#39;Start subgraph %s&#39; % graph.label)
+
+        self.write(&#39;&lt;node id=&#34;%s:&#34; yfiles.foldertype=&#34;group&#34;&gt;&#39; % graph.id)
+        self.indent()
+        self.write(&#39;&lt;data key=&#34;d0&#34;&gt;&#39;)
+        self.indent()
+        self.write(&#39;&lt;y:ProxyAutoBoundsNode&gt;&#39;)
+        self.indent()
+        self.write(&#39;&lt;y:Realizers active=&#34;0&#34;&gt;&#39;)
+        self.indent()
+        self.write(&#39;&lt;y:GroupNode&gt;&#39;)
+        self.indent()
+        self.write(&#39;&lt;y:Fill color=&#34;#CCCCCC&#34; transparent=&#34;false&#34;/&gt;&#39;)
+        self.write(&#39;&lt;y:NodeLabel modelName=&#34;internal&#34; modelPosition=&#34;t&#34; &#39;
+                   &#39;alignment=&#34;right&#34;&gt;%s&lt;/y:NodeLabel&gt;&#39;
+                   % graph.label)
+        self.write(&#39;&lt;y:Shape type=&#34;roundrectangle&#34;/&gt;&#39;)
+        self.dedent()
+        self.write(&#39;&lt;/y:GroupNode&gt;&#39;)
+        self.dedent()
+        self.write(&#39;&lt;/y:Realizers&gt;&#39;)
+        self.dedent()
+        self.write(&#39;&lt;/y:ProxyAutoBoundsNode&gt;&#39;)
+        self.dedent()
+        self.write(&#39;&lt;/data&gt;&#39;)
+        self.write(&#39;&lt;graph edgedefault=&#34;directed&#34; id=&#34;%s::&#34;&gt;&#39; % graph.id)
+        self.indent()
+
+    def finish_subgraph(self, graph):
+        self.log(&#39;Finish subgraph %s&#39; % graph.label)
+        self.dedent()
+        self.write(&#39;&lt;/graph&gt;&#39;)
+        self.dedent()
+        self.write(&#39;&lt;/node&gt;&#39;)
+
+    def write_node(self, node):
+        self.log(&#39;Write node %s&#39; % node.label)
+        width = 20 + 10*len(node.label)
+        self.write(&#39;&lt;node id=&#34;%s&#34;&gt;&#39; % node.id)
+        self.indent()
+        self.write(&#39;&lt;data key=&#34;d0&#34;&gt;&#39;)
+        self.indent()
+        self.write(&#39;&lt;y:ShapeNode&gt;&#39;)
+        self.indent()
+        self.write(&#39;&lt;y:Geometry height=&#34;%s&#34; width=&#34;%s&#34;/&gt;&#39; % (&#34;30&#34;, width))
+        self.write(&#39;&lt;y:Fill color=&#34;%s&#34; transparent=&#34;false&#34;/&gt;&#39;
+                   % node.fill_color)
+        self.write(&#39;&lt;y:BorderStyle color=&#34;#000000&#34; type=&#34;line&#34; &#39;
+                   &#39;width=&#34;1.0&#34;/&gt;&#39;)
+        self.write(&#39;&lt;y:NodeLabel&gt;%s&lt;/y:NodeLabel&gt;&#39;
+                   % node.label)
+        self.write(&#39;&lt;y:Shape type=&#34;ellipse&#34;/&gt;&#39;)
+        self.dedent()
+        self.write(&#39;&lt;/y:ShapeNode&gt;&#39;)
+        self.dedent()
+        self.write(&#39;&lt;/data&gt;&#39;)
+        self.dedent()
+        self.write(&#39;&lt;/node&gt;&#39;)
+
+    def write_edge(self, edge):
+        self.edge_id += 1
+        source = edge.source
+        target = edge.target
+        self.write(
+                &#39;&lt;edge id=&#34;%s&#34; source=&#34;%s&#34; target=&#34;%s&#34;&gt;&#39;
+                % (self.edge_id, source.id, target.id))
+        self.indent()
+        self.write(&#39;&lt;data key=&#34;d1&#34;&gt;&#39;)
+        self.indent()
+        self.write(&#39;&lt;y:PolyLineEdge&gt;&#39;)
+        self.indent()
+        if edge.flavor == &#39;defines&#39;:
+            self.write(&#39;&lt;y:LineStyle color=&#34;%s&#34; &#39;
+                       &#39;type=&#34;dashed&#34; width=&#34;1.0&#34;/&gt;&#39;
+                       % edge.color)
+        else:
+            self.write(&#39;&lt;y:LineStyle color=&#34;%s&#34; &#39;
+                       &#39;type=&#34;line&#34; width=&#34;1.0&#34;/&gt;&#39;
+                       % edge.color)
+        self.write(&#39;&lt;y:Arrows source=&#34;none&#34; target=&#34;standard&#34;/&gt;&#39;)
+        self.write(&#39;&lt;y:BendStyle smoothed=&#34;true&#34;/&gt;&#39;)
+        self.dedent()
+        self.write(&#39;&lt;/y:PolyLineEdge&gt;&#39;)
+        self.dedent()
+        self.write(&#39;&lt;/data&gt;&#39;)
+        self.dedent()
+        self.write(&#39;&lt;/edge&gt;&#39;)
+
+    def finish_graph(self):
+        self.dedent(2)
+        self.write(&#39;  &lt;/graph&gt;&#39;)
+        self.dedent()
+        self.write(&#39;&lt;/graphml&gt;&#39;)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="pyan.writers.Writer" href="#pyan.writers.Writer">Writer</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="pyan.writers.YedWriter.finish_graph"><code class="name flex">
+<span>def <span class="ident">finish_graph</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def finish_graph(self):
+    self.dedent(2)
+    self.write(&#39;  &lt;/graph&gt;&#39;)
+    self.dedent()
+    self.write(&#39;&lt;/graphml&gt;&#39;)</code></pre>
+</details>
+</dd>
+<dt id="pyan.writers.YedWriter.finish_subgraph"><code class="name flex">
+<span>def <span class="ident">finish_subgraph</span></span>(<span>self, graph)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def finish_subgraph(self, graph):
+    self.log(&#39;Finish subgraph %s&#39; % graph.label)
+    self.dedent()
+    self.write(&#39;&lt;/graph&gt;&#39;)
+    self.dedent()
+    self.write(&#39;&lt;/node&gt;&#39;)</code></pre>
+</details>
+</dd>
+<dt id="pyan.writers.YedWriter.start_graph"><code class="name flex">
+<span>def <span class="ident">start_graph</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def start_graph(self):
+    self.write(&#39;&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34; standalone=&#34;no&#34;?&gt;&#39;)
+    self.write(
+            &#39;&lt;graphml xmlns=&#34;http://graphml.graphdrawing.org/xmlns&#34;&#39;
+            &#39; xmlns:java=&#39;
+            &#39;&#34;http://www.yworks.com/xml/yfiles-common/1.0/java&#34;&#39;
+            &#39; xmlns:sys=&#39;
+            &#39;&#34;http://www.yworks.com/xml/yfiles-common/markup/primitives&#39;
+            &#39;/2.0&#34; xmlns:x=&#34;http://www.yworks.com/xml/yfiles-common/&#39;
+            &#39;markup/2.0&#34; xmlns:xsi=&#34;http://www.w3.org/2001/&#39;
+            &#39;XMLSchema-instance&#34; xmlns:y=&#34;http://www.yworks.com/xml/&#39;
+            &#39;graphml&#34; xmlns:yed=&#34;http://www.yworks.com/xml/yed/3&#34;&#39;
+            &#39; xsi:schemaLocation=&#34;http://graphml.graphdrawing.org/xmlns&#39;
+            &#39; http://www.yworks.com/xml/schema/graphml/1.1/&#39;
+            &#39;ygraphml.xsd&#34;&gt;&#39;)
+    self.indent()
+    self.write(&#39;&lt;key for=&#34;node&#34; id=&#34;d0&#34; yfiles.type=&#34;nodegraphics&#34;/&gt;&#39;)
+    self.write(&#39;&lt;key for=&#34;edge&#34; id=&#34;d1&#34; yfiles.type=&#34;edgegraphics&#34;/&gt;&#39;)
+    self.write(&#39;&lt;graph edgedefault=&#34;directed&#34; id=&#34;Graph&#34;&gt;&#39;)
+    self.indent()</code></pre>
+</details>
+</dd>
+<dt id="pyan.writers.YedWriter.start_subgraph"><code class="name flex">
+<span>def <span class="ident">start_subgraph</span></span>(<span>self, graph)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def start_subgraph(self, graph):
+    self.log(&#39;Start subgraph %s&#39; % graph.label)
+
+    self.write(&#39;&lt;node id=&#34;%s:&#34; yfiles.foldertype=&#34;group&#34;&gt;&#39; % graph.id)
+    self.indent()
+    self.write(&#39;&lt;data key=&#34;d0&#34;&gt;&#39;)
+    self.indent()
+    self.write(&#39;&lt;y:ProxyAutoBoundsNode&gt;&#39;)
+    self.indent()
+    self.write(&#39;&lt;y:Realizers active=&#34;0&#34;&gt;&#39;)
+    self.indent()
+    self.write(&#39;&lt;y:GroupNode&gt;&#39;)
+    self.indent()
+    self.write(&#39;&lt;y:Fill color=&#34;#CCCCCC&#34; transparent=&#34;false&#34;/&gt;&#39;)
+    self.write(&#39;&lt;y:NodeLabel modelName=&#34;internal&#34; modelPosition=&#34;t&#34; &#39;
+               &#39;alignment=&#34;right&#34;&gt;%s&lt;/y:NodeLabel&gt;&#39;
+               % graph.label)
+    self.write(&#39;&lt;y:Shape type=&#34;roundrectangle&#34;/&gt;&#39;)
+    self.dedent()
+    self.write(&#39;&lt;/y:GroupNode&gt;&#39;)
+    self.dedent()
+    self.write(&#39;&lt;/y:Realizers&gt;&#39;)
+    self.dedent()
+    self.write(&#39;&lt;/y:ProxyAutoBoundsNode&gt;&#39;)
+    self.dedent()
+    self.write(&#39;&lt;/data&gt;&#39;)
+    self.write(&#39;&lt;graph edgedefault=&#34;directed&#34; id=&#34;%s::&#34;&gt;&#39; % graph.id)
+    self.indent()</code></pre>
+</details>
+</dd>
+<dt id="pyan.writers.YedWriter.write_edge"><code class="name flex">
+<span>def <span class="ident">write_edge</span></span>(<span>self, edge)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def write_edge(self, edge):
+    self.edge_id += 1
+    source = edge.source
+    target = edge.target
+    self.write(
+            &#39;&lt;edge id=&#34;%s&#34; source=&#34;%s&#34; target=&#34;%s&#34;&gt;&#39;
+            % (self.edge_id, source.id, target.id))
+    self.indent()
+    self.write(&#39;&lt;data key=&#34;d1&#34;&gt;&#39;)
+    self.indent()
+    self.write(&#39;&lt;y:PolyLineEdge&gt;&#39;)
+    self.indent()
+    if edge.flavor == &#39;defines&#39;:
+        self.write(&#39;&lt;y:LineStyle color=&#34;%s&#34; &#39;
+                   &#39;type=&#34;dashed&#34; width=&#34;1.0&#34;/&gt;&#39;
+                   % edge.color)
+    else:
+        self.write(&#39;&lt;y:LineStyle color=&#34;%s&#34; &#39;
+                   &#39;type=&#34;line&#34; width=&#34;1.0&#34;/&gt;&#39;
+                   % edge.color)
+    self.write(&#39;&lt;y:Arrows source=&#34;none&#34; target=&#34;standard&#34;/&gt;&#39;)
+    self.write(&#39;&lt;y:BendStyle smoothed=&#34;true&#34;/&gt;&#39;)
+    self.dedent()
+    self.write(&#39;&lt;/y:PolyLineEdge&gt;&#39;)
+    self.dedent()
+    self.write(&#39;&lt;/data&gt;&#39;)
+    self.dedent()
+    self.write(&#39;&lt;/edge&gt;&#39;)</code></pre>
+</details>
+</dd>
+<dt id="pyan.writers.YedWriter.write_node"><code class="name flex">
+<span>def <span class="ident">write_node</span></span>(<span>self, node)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def write_node(self, node):
+    self.log(&#39;Write node %s&#39; % node.label)
+    width = 20 + 10*len(node.label)
+    self.write(&#39;&lt;node id=&#34;%s&#34;&gt;&#39; % node.id)
+    self.indent()
+    self.write(&#39;&lt;data key=&#34;d0&#34;&gt;&#39;)
+    self.indent()
+    self.write(&#39;&lt;y:ShapeNode&gt;&#39;)
+    self.indent()
+    self.write(&#39;&lt;y:Geometry height=&#34;%s&#34; width=&#34;%s&#34;/&gt;&#39; % (&#34;30&#34;, width))
+    self.write(&#39;&lt;y:Fill color=&#34;%s&#34; transparent=&#34;false&#34;/&gt;&#39;
+               % node.fill_color)
+    self.write(&#39;&lt;y:BorderStyle color=&#34;#000000&#34; type=&#34;line&#34; &#39;
+               &#39;width=&#34;1.0&#34;/&gt;&#39;)
+    self.write(&#39;&lt;y:NodeLabel&gt;%s&lt;/y:NodeLabel&gt;&#39;
+               % node.label)
+    self.write(&#39;&lt;y:Shape type=&#34;ellipse&#34;/&gt;&#39;)
+    self.dedent()
+    self.write(&#39;&lt;/y:ShapeNode&gt;&#39;)
+    self.dedent()
+    self.write(&#39;&lt;/data&gt;&#39;)
+    self.dedent()
+    self.write(&#39;&lt;/node&gt;&#39;)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="pyan" href="index.html">pyan</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="pyan.writers.DotWriter" href="#pyan.writers.DotWriter">DotWriter</a></code></h4>
+<ul class="two-column">
+<li><code><a title="pyan.writers.DotWriter.finish_graph" href="#pyan.writers.DotWriter.finish_graph">finish_graph</a></code></li>
+<li><code><a title="pyan.writers.DotWriter.finish_subgraph" href="#pyan.writers.DotWriter.finish_subgraph">finish_subgraph</a></code></li>
+<li><code><a title="pyan.writers.DotWriter.start_graph" href="#pyan.writers.DotWriter.start_graph">start_graph</a></code></li>
+<li><code><a title="pyan.writers.DotWriter.start_subgraph" href="#pyan.writers.DotWriter.start_subgraph">start_subgraph</a></code></li>
+<li><code><a title="pyan.writers.DotWriter.write_edge" href="#pyan.writers.DotWriter.write_edge">write_edge</a></code></li>
+<li><code><a title="pyan.writers.DotWriter.write_node" href="#pyan.writers.DotWriter.write_node">write_node</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="pyan.writers.TgfWriter" href="#pyan.writers.TgfWriter">TgfWriter</a></code></h4>
+<ul class="">
+<li><code><a title="pyan.writers.TgfWriter.start_edges" href="#pyan.writers.TgfWriter.start_edges">start_edges</a></code></li>
+<li><code><a title="pyan.writers.TgfWriter.write_edge" href="#pyan.writers.TgfWriter.write_edge">write_edge</a></code></li>
+<li><code><a title="pyan.writers.TgfWriter.write_node" href="#pyan.writers.TgfWriter.write_node">write_node</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="pyan.writers.Writer" href="#pyan.writers.Writer">Writer</a></code></h4>
+<ul class="two-column">
+<li><code><a title="pyan.writers.Writer.dedent" href="#pyan.writers.Writer.dedent">dedent</a></code></li>
+<li><code><a title="pyan.writers.Writer.finish_edges" href="#pyan.writers.Writer.finish_edges">finish_edges</a></code></li>
+<li><code><a title="pyan.writers.Writer.finish_graph" href="#pyan.writers.Writer.finish_graph">finish_graph</a></code></li>
+<li><code><a title="pyan.writers.Writer.finish_subgraph" href="#pyan.writers.Writer.finish_subgraph">finish_subgraph</a></code></li>
+<li><code><a title="pyan.writers.Writer.indent" href="#pyan.writers.Writer.indent">indent</a></code></li>
+<li><code><a title="pyan.writers.Writer.log" href="#pyan.writers.Writer.log">log</a></code></li>
+<li><code><a title="pyan.writers.Writer.run" href="#pyan.writers.Writer.run">run</a></code></li>
+<li><code><a title="pyan.writers.Writer.start_edges" href="#pyan.writers.Writer.start_edges">start_edges</a></code></li>
+<li><code><a title="pyan.writers.Writer.start_graph" href="#pyan.writers.Writer.start_graph">start_graph</a></code></li>
+<li><code><a title="pyan.writers.Writer.start_subgraph" href="#pyan.writers.Writer.start_subgraph">start_subgraph</a></code></li>
+<li><code><a title="pyan.writers.Writer.write" href="#pyan.writers.Writer.write">write</a></code></li>
+<li><code><a title="pyan.writers.Writer.write_edge" href="#pyan.writers.Writer.write_edge">write_edge</a></code></li>
+<li><code><a title="pyan.writers.Writer.write_edges" href="#pyan.writers.Writer.write_edges">write_edges</a></code></li>
+<li><code><a title="pyan.writers.Writer.write_node" href="#pyan.writers.Writer.write_node">write_node</a></code></li>
+<li><code><a title="pyan.writers.Writer.write_subgraph" href="#pyan.writers.Writer.write_subgraph">write_subgraph</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="pyan.writers.YedWriter" href="#pyan.writers.YedWriter">YedWriter</a></code></h4>
+<ul class="two-column">
+<li><code><a title="pyan.writers.YedWriter.finish_graph" href="#pyan.writers.YedWriter.finish_graph">finish_graph</a></code></li>
+<li><code><a title="pyan.writers.YedWriter.finish_subgraph" href="#pyan.writers.YedWriter.finish_subgraph">finish_subgraph</a></code></li>
+<li><code><a title="pyan.writers.YedWriter.start_graph" href="#pyan.writers.YedWriter.start_graph">start_graph</a></code></li>
+<li><code><a title="pyan.writers.YedWriter.start_subgraph" href="#pyan.writers.YedWriter.start_subgraph">start_subgraph</a></code></li>
+<li><code><a title="pyan.writers.YedWriter.write_edge" href="#pyan.writers.YedWriter.write_edge">write_edge</a></code></li>
+<li><code><a title="pyan.writers.YedWriter.write_node" href="#pyan.writers.YedWriter.write_node">write_node</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.6.3</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>

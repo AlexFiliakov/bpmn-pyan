@@ -1,0 +1,826 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.6.3" />
+<title>pyan.visgraph API documentation</title>
+<meta name="description" content="Format-agnostic representation of the output graph." />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{font-weight:bold}#index h4 + ul{margin-bottom:.6em}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase;cursor:pointer}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>pyan.visgraph</code></h1>
+</header>
+<section id="section-intro">
+<p>Format-agnostic representation of the output graph.</p>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+&#34;&#34;&#34;Format-agnostic representation of the output graph.&#34;&#34;&#34;
+
+import re
+import logging
+import colorsys
+
+# Set node color by filename.
+#
+# HSL: hue = top-level namespace, lightness = nesting level, saturation constant.
+#
+# The &#34;&#34; namespace (for *.py files) gets the first color. Since its
+# level is 0, its lightness will be 1.0, i.e. pure white regardless
+# of the hue.
+#
+class Colorizer:
+    def __init__(self, num_colors, colored=True, logger=None):
+        self.logger = logger or logging.getLogger(__name__)
+        self.colored = colored
+
+        self._hues = [j/num_colors for j in range(num_colors)]
+        self._idx_of = {}  # top-level namespace: hue index
+        self._idx = 0
+
+    def _next_idx(self):
+        result = self._idx
+        self._idx += 1
+        if self._idx &gt;= len(self._hues):
+            self.logger.warn(&#34;WARNING: colors wrapped&#34;)
+            self._idx = 0
+        return result
+
+    def _node_to_idx(self, node):
+        ns = node.filename
+        self.logger.info(&#34;Coloring %s from file &#39;%s&#39;&#34; % (node.get_short_name(), ns))
+        if ns not in self._idx_of:
+            self._idx_of[ns] = self._next_idx()
+        return self._idx_of[ns]
+
+    def get(self, node):  # return (group number, hue index)
+        idx = self._node_to_idx(node)
+        return (idx,self._hues[idx])
+
+    def make_colors(self, node):  # return (group number, fill color, text color)
+        if self.colored:
+            idx,H = self.get(node)
+            L = max( [1.0 - 0.1*node.get_level(), 0.1] )
+            S = 1.0
+            A = 0.7  # make nodes translucent (to handle possible overlaps)
+            fill_RGBA = self.htmlize_rgb(*colorsys.hls_to_rgb(H,L,S), A=A)
+
+            # black text on light nodes, white text on (very) dark nodes.
+            text_RGB = &#34;#000000&#34; if L &gt;= 0.5 else &#34;#ffffff&#34;
+        else:
+            idx,_ = self.get(node)
+            fill_RGBA = self.htmlize_rgb(1.0, 1.0, 1.0, 0.7)
+            text_RGB = &#34;#000000&#34;
+        return idx, fill_RGBA, text_RGB
+
+    @staticmethod
+    def htmlize_rgb(R,G,B,A=None):
+        if A is not None:
+            R,G,B,A = [int(255.0*x) for x in (R,G,B,A)]
+            return &#34;#%02x%02x%02x%02x&#34; % (R,G,B,A)
+        else:
+            R,G,B = [int(255.0*x) for x in (R,G,B)]
+            return &#34;#%02x%02x%02x&#34; % (R,G,B)
+
+
+class VisualNode(object):
+    &#34;&#34;&#34;
+    A node in the output graph: colors, internal ID, human-readable label, ...
+    &#34;&#34;&#34;
+    def __init__(
+            self, id, label=&#39;&#39;, flavor=&#39;&#39;,
+            fill_color=&#39;&#39;, text_color=&#39;&#39;, group=&#39;&#39;):
+        self.id = id        # graphing software friendly label (no special chars)
+        self.label = label  # human-friendly label
+        self.flavor = flavor
+        self.fill_color = fill_color
+        self.text_color = text_color
+        self.group = group
+
+    def __repr__(self):
+        optionals = [
+                repr(s) for s in [
+                    self.label, self.flavor,
+                    self.fill_color, self.text_color, self.group] if s]
+        if optionals:
+            return (&#39;VisualNode(&#39; + repr(self.id) +
+                    &#39;, &#39; + &#39;, &#39;.join(optionals)+&#39;)&#39;)
+        else:
+            return &#39;VisualNode(&#39; + repr(self.id) + &#39;)&#39;
+
+
+class VisualEdge(object):
+    &#34;&#34;&#34;
+    An edge in the output graph.
+
+    flavor is meant to be &#39;uses&#39; or &#39;defines&#39;
+    &#34;&#34;&#34;
+    def __init__(self, source, target, flavor, color):
+        self.source = source
+        self.target = target
+        self.flavor = flavor
+        self.color  = color
+
+    def __repr__(self):
+        return (
+                &#39;Edge(&#39;+self.source.label+&#39; &#39;+self.flavor+&#39; &#39; +
+                self.target.label+&#39;)&#39;)
+
+
+class VisualGraph(object):
+    def __init__(
+            self, id, label, nodes=None, edges=None, subgraphs=None,
+            grouped=False):
+        self.id = id
+        self.label = label
+        self.nodes = nodes or []
+        self.edges = edges or []
+        self.subgraphs = subgraphs or []
+        self.grouped = grouped
+
+    @classmethod
+    def from_visitor(cls, visitor, options=None, logger=None):
+        colored = options.get(&#39;colored&#39;, False)
+        nested = options.get(&#39;nested_groups&#39;, False)
+        grouped_alt = options.get(&#39;grouped_alt&#39;, False)
+        grouped = nested or options.get(&#39;grouped&#39;, False)  # nested -&gt; grouped
+        annotated = options.get(&#39;annotated&#39;, False)
+        draw_defines = options.get(&#39;draw_defines&#39;, False)
+        draw_uses = options.get(&#39;draw_uses&#39;, False)
+
+        # Terminology:
+        #  - what Node calls &#34;label&#34; is a computer-friendly unique identifier
+        #    for use in graphing tools
+        #  - the &#34;label&#34; property of a GraphViz node is a **human-readable** name
+        #
+        # The annotation determines the human-readable name.
+        #
+        if annotated:
+            if grouped:
+                # group label includes namespace already
+                labeler = lambda n: n.get_annotated_name()
+            else:
+                # the node label is the only place to put the namespace info
+                labeler = lambda n: n.get_long_annotated_name()
+        else:
+            labeler = lambda n: n.get_short_name()
+
+        logger = logger or logging.getLogger(__name__)
+
+        # collect and sort defined nodes
+        visited_nodes = []
+        for name in visitor.nodes:
+            for node in visitor.nodes[name]:
+                if node.defined:
+                    visited_nodes.append(node)
+        visited_nodes.sort(key=lambda x: (x.namespace, x.name))
+
+        def find_filenames():
+            filenames = set()
+            for node in visited_nodes:
+                filenames.add(node.filename)
+            return filenames
+        colorizer = Colorizer(num_colors=len(find_filenames())+1,
+                              colored=colored, logger=logger)
+
+        nodes_dict = dict()
+        root_graph = cls(&#39;G&#39;, label=&#39;&#39;, grouped=grouped)
+        subgraph = root_graph
+        namespace_stack = []
+        prev_namespace = &#39;&#39;  # The namespace &#39;&#39; is first in visited_nodes.
+        for node in visited_nodes:
+            logger.info(&#39;Looking at %s&#39; % node.name)
+
+            # Create the node itself and add it to nodes_dict
+            idx, fill_RGBA, text_RGB = colorizer.make_colors(node)
+            visual_node = VisualNode(
+                    id=node.get_label(),
+                    label=labeler(node),
+                    flavor=repr(node.flavor),
+                    fill_color=fill_RGBA,
+                    text_color=text_RGB,
+                    group=idx)
+            nodes_dict[node] = visual_node
+
+            # next namespace?
+            if grouped and node.namespace != prev_namespace:
+                logger.info(
+                        &#39;New namespace %s, old was %s&#39;
+                        % (node.namespace, prev_namespace))
+
+                label = node.get_namespace_label()
+                subgraph = cls(label, node.namespace)
+
+                if nested:
+                    # Pop the stack until the newly found namespace is within
+                    # one of the parent namespaces, or until the stack runs out
+                    # (i.e. this is a sibling).
+                    if len(namespace_stack):
+                        m = re.match(namespace_stack[-1].label, node.namespace)
+                        # The &#39;.&#39; check catches siblings in cases like
+                        # MeshGenerator vs. Mesh.
+                        while (m is None or
+                               m.end() == len(node.namespace) or
+                               node.namespace[m.end()] != &#39;.&#39;):
+                            namespace_stack.pop()
+                            if not len(namespace_stack):
+                                break
+                            m = re.match(
+                                    namespace_stack[-1].label, node.namespace)
+                    parentgraph = namespace_stack[-1] if len(namespace_stack) else root_graph
+                    parentgraph.subgraphs.append(subgraph)
+
+                    namespace_stack.append(subgraph)
+                else:
+                    root_graph.subgraphs.append(subgraph)
+
+            subgraph.nodes.append(visual_node)
+
+        # Now add edges
+        if draw_defines or grouped_alt:
+            # If grouped, use gray lines so they won&#39;t visually obstruct
+            # the &#34;uses&#34; lines.
+            #
+            # If not grouped, create lines for defines, but make them
+            # fully transparent. This helps GraphViz&#39;s layout algorithms
+            # place closer together those nodes that are linked by a
+            # defines relationship.
+            #
+            color = &#34;#838b8b&#34; if draw_defines else &#39;#ffffff00&#39;
+            for n in visitor.defines_edges:
+                if n.defined:
+                    for n2 in visitor.defines_edges[n]:
+                        if n2.defined:
+                            root_graph.edges.append(
+                                    VisualEdge(
+                                        nodes_dict[n],
+                                        nodes_dict[n2],
+                                        &#39;defines&#39;,
+                                        color))
+
+        if draw_uses:
+            color = &#34;#000000&#34;
+            for n in visitor.uses_edges:
+                if n.defined:
+                    for n2 in visitor.uses_edges[n]:
+                        if n2.defined:
+                            root_graph.edges.append(
+                                    VisualEdge(
+                                        nodes_dict[n],
+                                        nodes_dict[n2],
+                                        &#39;uses&#39;,
+                                        color))
+
+        return root_graph</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="pyan.visgraph.Colorizer"><code class="flex name class">
+<span>class <span class="ident">Colorizer</span></span>
+<span>(</span><span>num_colors, colored=True, logger=None)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">class Colorizer:
+    def __init__(self, num_colors, colored=True, logger=None):
+        self.logger = logger or logging.getLogger(__name__)
+        self.colored = colored
+
+        self._hues = [j/num_colors for j in range(num_colors)]
+        self._idx_of = {}  # top-level namespace: hue index
+        self._idx = 0
+
+    def _next_idx(self):
+        result = self._idx
+        self._idx += 1
+        if self._idx &gt;= len(self._hues):
+            self.logger.warn(&#34;WARNING: colors wrapped&#34;)
+            self._idx = 0
+        return result
+
+    def _node_to_idx(self, node):
+        ns = node.filename
+        self.logger.info(&#34;Coloring %s from file &#39;%s&#39;&#34; % (node.get_short_name(), ns))
+        if ns not in self._idx_of:
+            self._idx_of[ns] = self._next_idx()
+        return self._idx_of[ns]
+
+    def get(self, node):  # return (group number, hue index)
+        idx = self._node_to_idx(node)
+        return (idx,self._hues[idx])
+
+    def make_colors(self, node):  # return (group number, fill color, text color)
+        if self.colored:
+            idx,H = self.get(node)
+            L = max( [1.0 - 0.1*node.get_level(), 0.1] )
+            S = 1.0
+            A = 0.7  # make nodes translucent (to handle possible overlaps)
+            fill_RGBA = self.htmlize_rgb(*colorsys.hls_to_rgb(H,L,S), A=A)
+
+            # black text on light nodes, white text on (very) dark nodes.
+            text_RGB = &#34;#000000&#34; if L &gt;= 0.5 else &#34;#ffffff&#34;
+        else:
+            idx,_ = self.get(node)
+            fill_RGBA = self.htmlize_rgb(1.0, 1.0, 1.0, 0.7)
+            text_RGB = &#34;#000000&#34;
+        return idx, fill_RGBA, text_RGB
+
+    @staticmethod
+    def htmlize_rgb(R,G,B,A=None):
+        if A is not None:
+            R,G,B,A = [int(255.0*x) for x in (R,G,B,A)]
+            return &#34;#%02x%02x%02x%02x&#34; % (R,G,B,A)
+        else:
+            R,G,B = [int(255.0*x) for x in (R,G,B)]
+            return &#34;#%02x%02x%02x&#34; % (R,G,B)</code></pre>
+</details>
+<h3>Static methods</h3>
+<dl>
+<dt id="pyan.visgraph.Colorizer.htmlize_rgb"><code class="name flex">
+<span>def <span class="ident">htmlize_rgb</span></span>(<span>R, G, B, A=None)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">@staticmethod
+def htmlize_rgb(R,G,B,A=None):
+    if A is not None:
+        R,G,B,A = [int(255.0*x) for x in (R,G,B,A)]
+        return &#34;#%02x%02x%02x%02x&#34; % (R,G,B,A)
+    else:
+        R,G,B = [int(255.0*x) for x in (R,G,B)]
+        return &#34;#%02x%02x%02x&#34; % (R,G,B)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="pyan.visgraph.Colorizer.get"><code class="name flex">
+<span>def <span class="ident">get</span></span>(<span>self, node)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def get(self, node):  # return (group number, hue index)
+    idx = self._node_to_idx(node)
+    return (idx,self._hues[idx])</code></pre>
+</details>
+</dd>
+<dt id="pyan.visgraph.Colorizer.make_colors"><code class="name flex">
+<span>def <span class="ident">make_colors</span></span>(<span>self, node)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def make_colors(self, node):  # return (group number, fill color, text color)
+    if self.colored:
+        idx,H = self.get(node)
+        L = max( [1.0 - 0.1*node.get_level(), 0.1] )
+        S = 1.0
+        A = 0.7  # make nodes translucent (to handle possible overlaps)
+        fill_RGBA = self.htmlize_rgb(*colorsys.hls_to_rgb(H,L,S), A=A)
+
+        # black text on light nodes, white text on (very) dark nodes.
+        text_RGB = &#34;#000000&#34; if L &gt;= 0.5 else &#34;#ffffff&#34;
+    else:
+        idx,_ = self.get(node)
+        fill_RGBA = self.htmlize_rgb(1.0, 1.0, 1.0, 0.7)
+        text_RGB = &#34;#000000&#34;
+    return idx, fill_RGBA, text_RGB</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="pyan.visgraph.VisualEdge"><code class="flex name class">
+<span>class <span class="ident">VisualEdge</span></span>
+<span>(</span><span>source, target, flavor, color)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>An edge in the output graph.</p>
+<p>flavor is meant to be 'uses' or 'defines'</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">class VisualEdge(object):
+    &#34;&#34;&#34;
+    An edge in the output graph.
+
+    flavor is meant to be &#39;uses&#39; or &#39;defines&#39;
+    &#34;&#34;&#34;
+    def __init__(self, source, target, flavor, color):
+        self.source = source
+        self.target = target
+        self.flavor = flavor
+        self.color  = color
+
+    def __repr__(self):
+        return (
+                &#39;Edge(&#39;+self.source.label+&#39; &#39;+self.flavor+&#39; &#39; +
+                self.target.label+&#39;)&#39;)</code></pre>
+</details>
+</dd>
+<dt id="pyan.visgraph.VisualGraph"><code class="flex name class">
+<span>class <span class="ident">VisualGraph</span></span>
+<span>(</span><span>id, label, nodes=None, edges=None, subgraphs=None, grouped=False)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">class VisualGraph(object):
+    def __init__(
+            self, id, label, nodes=None, edges=None, subgraphs=None,
+            grouped=False):
+        self.id = id
+        self.label = label
+        self.nodes = nodes or []
+        self.edges = edges or []
+        self.subgraphs = subgraphs or []
+        self.grouped = grouped
+
+    @classmethod
+    def from_visitor(cls, visitor, options=None, logger=None):
+        colored = options.get(&#39;colored&#39;, False)
+        nested = options.get(&#39;nested_groups&#39;, False)
+        grouped_alt = options.get(&#39;grouped_alt&#39;, False)
+        grouped = nested or options.get(&#39;grouped&#39;, False)  # nested -&gt; grouped
+        annotated = options.get(&#39;annotated&#39;, False)
+        draw_defines = options.get(&#39;draw_defines&#39;, False)
+        draw_uses = options.get(&#39;draw_uses&#39;, False)
+
+        # Terminology:
+        #  - what Node calls &#34;label&#34; is a computer-friendly unique identifier
+        #    for use in graphing tools
+        #  - the &#34;label&#34; property of a GraphViz node is a **human-readable** name
+        #
+        # The annotation determines the human-readable name.
+        #
+        if annotated:
+            if grouped:
+                # group label includes namespace already
+                labeler = lambda n: n.get_annotated_name()
+            else:
+                # the node label is the only place to put the namespace info
+                labeler = lambda n: n.get_long_annotated_name()
+        else:
+            labeler = lambda n: n.get_short_name()
+
+        logger = logger or logging.getLogger(__name__)
+
+        # collect and sort defined nodes
+        visited_nodes = []
+        for name in visitor.nodes:
+            for node in visitor.nodes[name]:
+                if node.defined:
+                    visited_nodes.append(node)
+        visited_nodes.sort(key=lambda x: (x.namespace, x.name))
+
+        def find_filenames():
+            filenames = set()
+            for node in visited_nodes:
+                filenames.add(node.filename)
+            return filenames
+        colorizer = Colorizer(num_colors=len(find_filenames())+1,
+                              colored=colored, logger=logger)
+
+        nodes_dict = dict()
+        root_graph = cls(&#39;G&#39;, label=&#39;&#39;, grouped=grouped)
+        subgraph = root_graph
+        namespace_stack = []
+        prev_namespace = &#39;&#39;  # The namespace &#39;&#39; is first in visited_nodes.
+        for node in visited_nodes:
+            logger.info(&#39;Looking at %s&#39; % node.name)
+
+            # Create the node itself and add it to nodes_dict
+            idx, fill_RGBA, text_RGB = colorizer.make_colors(node)
+            visual_node = VisualNode(
+                    id=node.get_label(),
+                    label=labeler(node),
+                    flavor=repr(node.flavor),
+                    fill_color=fill_RGBA,
+                    text_color=text_RGB,
+                    group=idx)
+            nodes_dict[node] = visual_node
+
+            # next namespace?
+            if grouped and node.namespace != prev_namespace:
+                logger.info(
+                        &#39;New namespace %s, old was %s&#39;
+                        % (node.namespace, prev_namespace))
+
+                label = node.get_namespace_label()
+                subgraph = cls(label, node.namespace)
+
+                if nested:
+                    # Pop the stack until the newly found namespace is within
+                    # one of the parent namespaces, or until the stack runs out
+                    # (i.e. this is a sibling).
+                    if len(namespace_stack):
+                        m = re.match(namespace_stack[-1].label, node.namespace)
+                        # The &#39;.&#39; check catches siblings in cases like
+                        # MeshGenerator vs. Mesh.
+                        while (m is None or
+                               m.end() == len(node.namespace) or
+                               node.namespace[m.end()] != &#39;.&#39;):
+                            namespace_stack.pop()
+                            if not len(namespace_stack):
+                                break
+                            m = re.match(
+                                    namespace_stack[-1].label, node.namespace)
+                    parentgraph = namespace_stack[-1] if len(namespace_stack) else root_graph
+                    parentgraph.subgraphs.append(subgraph)
+
+                    namespace_stack.append(subgraph)
+                else:
+                    root_graph.subgraphs.append(subgraph)
+
+            subgraph.nodes.append(visual_node)
+
+        # Now add edges
+        if draw_defines or grouped_alt:
+            # If grouped, use gray lines so they won&#39;t visually obstruct
+            # the &#34;uses&#34; lines.
+            #
+            # If not grouped, create lines for defines, but make them
+            # fully transparent. This helps GraphViz&#39;s layout algorithms
+            # place closer together those nodes that are linked by a
+            # defines relationship.
+            #
+            color = &#34;#838b8b&#34; if draw_defines else &#39;#ffffff00&#39;
+            for n in visitor.defines_edges:
+                if n.defined:
+                    for n2 in visitor.defines_edges[n]:
+                        if n2.defined:
+                            root_graph.edges.append(
+                                    VisualEdge(
+                                        nodes_dict[n],
+                                        nodes_dict[n2],
+                                        &#39;defines&#39;,
+                                        color))
+
+        if draw_uses:
+            color = &#34;#000000&#34;
+            for n in visitor.uses_edges:
+                if n.defined:
+                    for n2 in visitor.uses_edges[n]:
+                        if n2.defined:
+                            root_graph.edges.append(
+                                    VisualEdge(
+                                        nodes_dict[n],
+                                        nodes_dict[n2],
+                                        &#39;uses&#39;,
+                                        color))
+
+        return root_graph</code></pre>
+</details>
+<h3>Static methods</h3>
+<dl>
+<dt id="pyan.visgraph.VisualGraph.from_visitor"><code class="name flex">
+<span>def <span class="ident">from_visitor</span></span>(<span>visitor, options=None, logger=None)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">@classmethod
+def from_visitor(cls, visitor, options=None, logger=None):
+    colored = options.get(&#39;colored&#39;, False)
+    nested = options.get(&#39;nested_groups&#39;, False)
+    grouped_alt = options.get(&#39;grouped_alt&#39;, False)
+    grouped = nested or options.get(&#39;grouped&#39;, False)  # nested -&gt; grouped
+    annotated = options.get(&#39;annotated&#39;, False)
+    draw_defines = options.get(&#39;draw_defines&#39;, False)
+    draw_uses = options.get(&#39;draw_uses&#39;, False)
+
+    # Terminology:
+    #  - what Node calls &#34;label&#34; is a computer-friendly unique identifier
+    #    for use in graphing tools
+    #  - the &#34;label&#34; property of a GraphViz node is a **human-readable** name
+    #
+    # The annotation determines the human-readable name.
+    #
+    if annotated:
+        if grouped:
+            # group label includes namespace already
+            labeler = lambda n: n.get_annotated_name()
+        else:
+            # the node label is the only place to put the namespace info
+            labeler = lambda n: n.get_long_annotated_name()
+    else:
+        labeler = lambda n: n.get_short_name()
+
+    logger = logger or logging.getLogger(__name__)
+
+    # collect and sort defined nodes
+    visited_nodes = []
+    for name in visitor.nodes:
+        for node in visitor.nodes[name]:
+            if node.defined:
+                visited_nodes.append(node)
+    visited_nodes.sort(key=lambda x: (x.namespace, x.name))
+
+    def find_filenames():
+        filenames = set()
+        for node in visited_nodes:
+            filenames.add(node.filename)
+        return filenames
+    colorizer = Colorizer(num_colors=len(find_filenames())+1,
+                          colored=colored, logger=logger)
+
+    nodes_dict = dict()
+    root_graph = cls(&#39;G&#39;, label=&#39;&#39;, grouped=grouped)
+    subgraph = root_graph
+    namespace_stack = []
+    prev_namespace = &#39;&#39;  # The namespace &#39;&#39; is first in visited_nodes.
+    for node in visited_nodes:
+        logger.info(&#39;Looking at %s&#39; % node.name)
+
+        # Create the node itself and add it to nodes_dict
+        idx, fill_RGBA, text_RGB = colorizer.make_colors(node)
+        visual_node = VisualNode(
+                id=node.get_label(),
+                label=labeler(node),
+                flavor=repr(node.flavor),
+                fill_color=fill_RGBA,
+                text_color=text_RGB,
+                group=idx)
+        nodes_dict[node] = visual_node
+
+        # next namespace?
+        if grouped and node.namespace != prev_namespace:
+            logger.info(
+                    &#39;New namespace %s, old was %s&#39;
+                    % (node.namespace, prev_namespace))
+
+            label = node.get_namespace_label()
+            subgraph = cls(label, node.namespace)
+
+            if nested:
+                # Pop the stack until the newly found namespace is within
+                # one of the parent namespaces, or until the stack runs out
+                # (i.e. this is a sibling).
+                if len(namespace_stack):
+                    m = re.match(namespace_stack[-1].label, node.namespace)
+                    # The &#39;.&#39; check catches siblings in cases like
+                    # MeshGenerator vs. Mesh.
+                    while (m is None or
+                           m.end() == len(node.namespace) or
+                           node.namespace[m.end()] != &#39;.&#39;):
+                        namespace_stack.pop()
+                        if not len(namespace_stack):
+                            break
+                        m = re.match(
+                                namespace_stack[-1].label, node.namespace)
+                parentgraph = namespace_stack[-1] if len(namespace_stack) else root_graph
+                parentgraph.subgraphs.append(subgraph)
+
+                namespace_stack.append(subgraph)
+            else:
+                root_graph.subgraphs.append(subgraph)
+
+        subgraph.nodes.append(visual_node)
+
+    # Now add edges
+    if draw_defines or grouped_alt:
+        # If grouped, use gray lines so they won&#39;t visually obstruct
+        # the &#34;uses&#34; lines.
+        #
+        # If not grouped, create lines for defines, but make them
+        # fully transparent. This helps GraphViz&#39;s layout algorithms
+        # place closer together those nodes that are linked by a
+        # defines relationship.
+        #
+        color = &#34;#838b8b&#34; if draw_defines else &#39;#ffffff00&#39;
+        for n in visitor.defines_edges:
+            if n.defined:
+                for n2 in visitor.defines_edges[n]:
+                    if n2.defined:
+                        root_graph.edges.append(
+                                VisualEdge(
+                                    nodes_dict[n],
+                                    nodes_dict[n2],
+                                    &#39;defines&#39;,
+                                    color))
+
+    if draw_uses:
+        color = &#34;#000000&#34;
+        for n in visitor.uses_edges:
+            if n.defined:
+                for n2 in visitor.uses_edges[n]:
+                    if n2.defined:
+                        root_graph.edges.append(
+                                VisualEdge(
+                                    nodes_dict[n],
+                                    nodes_dict[n2],
+                                    &#39;uses&#39;,
+                                    color))
+
+    return root_graph</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="pyan.visgraph.VisualNode"><code class="flex name class">
+<span>class <span class="ident">VisualNode</span></span>
+<span>(</span><span>id, label='', flavor='', fill_color='', text_color='', group='')</span>
+</code></dt>
+<dd>
+<section class="desc"><p>A node in the output graph: colors, internal ID, human-readable label, &hellip;</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">class VisualNode(object):
+    &#34;&#34;&#34;
+    A node in the output graph: colors, internal ID, human-readable label, ...
+    &#34;&#34;&#34;
+    def __init__(
+            self, id, label=&#39;&#39;, flavor=&#39;&#39;,
+            fill_color=&#39;&#39;, text_color=&#39;&#39;, group=&#39;&#39;):
+        self.id = id        # graphing software friendly label (no special chars)
+        self.label = label  # human-friendly label
+        self.flavor = flavor
+        self.fill_color = fill_color
+        self.text_color = text_color
+        self.group = group
+
+    def __repr__(self):
+        optionals = [
+                repr(s) for s in [
+                    self.label, self.flavor,
+                    self.fill_color, self.text_color, self.group] if s]
+        if optionals:
+            return (&#39;VisualNode(&#39; + repr(self.id) +
+                    &#39;, &#39; + &#39;, &#39;.join(optionals)+&#39;)&#39;)
+        else:
+            return &#39;VisualNode(&#39; + repr(self.id) + &#39;)&#39;</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="pyan" href="index.html">pyan</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="pyan.visgraph.Colorizer" href="#pyan.visgraph.Colorizer">Colorizer</a></code></h4>
+<ul class="">
+<li><code><a title="pyan.visgraph.Colorizer.get" href="#pyan.visgraph.Colorizer.get">get</a></code></li>
+<li><code><a title="pyan.visgraph.Colorizer.htmlize_rgb" href="#pyan.visgraph.Colorizer.htmlize_rgb">htmlize_rgb</a></code></li>
+<li><code><a title="pyan.visgraph.Colorizer.make_colors" href="#pyan.visgraph.Colorizer.make_colors">make_colors</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="pyan.visgraph.VisualEdge" href="#pyan.visgraph.VisualEdge">VisualEdge</a></code></h4>
+</li>
+<li>
+<h4><code><a title="pyan.visgraph.VisualGraph" href="#pyan.visgraph.VisualGraph">VisualGraph</a></code></h4>
+<ul class="">
+<li><code><a title="pyan.visgraph.VisualGraph.from_visitor" href="#pyan.visgraph.VisualGraph.from_visitor">from_visitor</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="pyan.visgraph.VisualNode" href="#pyan.visgraph.VisualNode">VisualNode</a></code></h4>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.6.3</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>

@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.6.3" />
+<title>pyan.main API documentation</title>
+<meta name="description" content="pyan.py - Generate approximate call graphs for Python programs …" />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{font-weight:bold}#index h4 + ul{margin-bottom:.6em}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase;cursor:pointer}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>pyan.main</code></h1>
+</header>
+<section id="section-intro">
+<p>pyan.py - Generate approximate call graphs for Python programs.</p>
+<p>This program takes one or more Python source files, does a superficial
+analysis, and constructs a directed graph of the objects in the combined
+source, and how they define or use each other.
+The graph can be output
+for rendering by e.g. GraphViz or yEd.</p>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+&#34;&#34;&#34;
+    pyan.py - Generate approximate call graphs for Python programs.
+
+    This program takes one or more Python source files, does a superficial
+    analysis, and constructs a directed graph of the objects in the combined
+    source, and how they define or use each other.  The graph can be output
+    for rendering by e.g. GraphViz or yEd.
+&#34;&#34;&#34;
+
+import logging
+from glob import glob
+from optparse import OptionParser  # TODO: migrate to argparse
+
+from .analyzer import CallGraphVisitor
+from .visgraph import VisualGraph
+from .writers import TgfWriter, DotWriter, YedWriter
+
+def main():
+    usage = &#34;&#34;&#34;usage: %prog FILENAME... [--dot|--tgf|--yed]&#34;&#34;&#34;
+    desc = (&#39;Analyse one or more Python source files and generate an&#39;
+            &#39;approximate call graph of the modules, classes and functions&#39;
+            &#39; within them.&#39;)
+    parser = OptionParser(usage=usage, description=desc)
+    parser.add_option(&#34;--dot&#34;,
+                      action=&#34;store_true&#34;, default=False,
+                      help=&#34;output in GraphViz dot format&#34;)
+    parser.add_option(&#34;--tgf&#34;,
+                      action=&#34;store_true&#34;, default=False,
+                      help=&#34;output in Trivial Graph Format&#34;)
+    parser.add_option(&#34;--yed&#34;,
+                      action=&#34;store_true&#34;, default=False,
+                      help=&#34;output in yEd GraphML Format&#34;)
+    parser.add_option(&#34;-f&#34;, &#34;--file&#34;, dest=&#34;filename&#34;,
+                      help=&#34;write graph to FILE&#34;, metavar=&#34;FILE&#34;, default=None)
+    parser.add_option(&#34;-l&#34;, &#34;--log&#34;, dest=&#34;logname&#34;,
+                      help=&#34;write log to LOG&#34;, metavar=&#34;LOG&#34;)
+    parser.add_option(&#34;-v&#34;, &#34;--verbose&#34;,
+                      action=&#34;store_true&#34;, default=False, dest=&#34;verbose&#34;,
+                      help=&#34;verbose output&#34;)
+    parser.add_option(&#34;-V&#34;, &#34;--very-verbose&#34;,
+                      action=&#34;store_true&#34;, default=False, dest=&#34;very_verbose&#34;,
+                      help=&#34;even more verbose output (mainly for debug)&#34;)
+    parser.add_option(&#34;-d&#34;, &#34;--defines&#34;,
+                      action=&#34;store_true&#34;, default=True, dest=&#34;draw_defines&#34;,
+                      help=&#34;add edges for &#39;defines&#39; relationships [default]&#34;)
+    parser.add_option(&#34;-n&#34;, &#34;--no-defines&#34;,
+                      action=&#34;store_false&#34;, default=True, dest=&#34;draw_defines&#34;,
+                      help=&#34;do not add edges for &#39;defines&#39; relationships&#34;)
+    parser.add_option(&#34;-u&#34;, &#34;--uses&#34;,
+                      action=&#34;store_true&#34;, default=True, dest=&#34;draw_uses&#34;,
+                      help=&#34;add edges for &#39;uses&#39; relationships [default]&#34;)
+    parser.add_option(&#34;-N&#34;, &#34;--no-uses&#34;,
+                      action=&#34;store_false&#34;, default=True, dest=&#34;draw_uses&#34;,
+                      help=&#34;do not add edges for &#39;uses&#39; relationships&#34;)
+    parser.add_option(&#34;-c&#34;, &#34;--colored&#34;,
+                      action=&#34;store_true&#34;, default=False, dest=&#34;colored&#34;,
+                      help=&#34;color nodes according to namespace [dot only]&#34;)
+    parser.add_option(&#34;-G&#34;, &#34;--grouped-alt&#34;,
+                      action=&#34;store_true&#34;, default=False, dest=&#34;grouped_alt&#34;,
+                      help=&#34;suggest grouping by adding invisible defines edges [only useful with --no-defines]&#34;)
+    parser.add_option(&#34;-g&#34;, &#34;--grouped&#34;,
+                      action=&#34;store_true&#34;, default=False, dest=&#34;grouped&#34;,
+                      help=&#34;group nodes (create subgraphs) according to namespace [dot only]&#34;)
+    parser.add_option(&#34;-e&#34;, &#34;--nested-groups&#34;,
+                      action=&#34;store_true&#34;, default=False, dest=&#34;nested_groups&#34;,
+                      help=&#34;create nested groups (subgraphs) for nested namespaces (implies -g) [dot only]&#34;)
+    parser.add_option(&#34;--dot-rankdir&#34;, default=&#34;TB&#34;, dest=&#34;rankdir&#34;,
+                      help=(
+                        &#34;specifies the dot graph &#39;rankdir&#39; property for &#34;
+                        &#34;controlling the direction of the graph. &#34;
+                        &#34;Allowed values: [&#39;TB&#39;, &#39;LR&#39;, &#39;BT&#39;, &#39;RL&#39;]. &#34;
+                        &#34;[dot only]&#34;))
+    parser.add_option(&#34;-a&#34;, &#34;--annotated&#34;,
+                      action=&#34;store_true&#34;, default=False, dest=&#34;annotated&#34;,
+                      help=&#34;annotate with module and source line number&#34;)
+
+    options, args = parser.parse_args()
+    filenames = [fn2 for fn in args for fn2 in glob(fn)]
+    if len(args) == 0:
+        parser.error(&#39;Need one or more filenames to process&#39;)
+
+    if options.nested_groups:
+        options.grouped = True
+
+    graph_options = {
+            &#39;draw_defines&#39;: options.draw_defines,
+            &#39;draw_uses&#39;: options.draw_uses,
+            &#39;colored&#39;: options.colored,
+            &#39;grouped_alt&#39; : options.grouped_alt,
+            &#39;grouped&#39;: options.grouped,
+            &#39;nested_groups&#39;: options.nested_groups,
+            &#39;annotated&#39;: options.annotated}
+
+    # TODO: use an int argument for verbosity
+    logger = logging.getLogger(__name__)
+    if options.very_verbose:
+        logger.setLevel(logging.DEBUG)
+    elif options.verbose:
+        logger.setLevel(logging.INFO)
+    else:
+        logger.setLevel(logging.WARN)
+    logger.addHandler(logging.StreamHandler())
+    if options.logname:
+        handler = logging.FileHandler(options.logname)
+        logger.addHandler(handler)
+
+    v = CallGraphVisitor(filenames, logger)
+    graph = VisualGraph.from_visitor(v, options=graph_options, logger=logger)
+
+    if options.dot:
+        writer = DotWriter(
+                graph,
+                options=[&#39;rankdir=&#39;+options.rankdir],
+                output=options.filename,
+                logger=logger)
+        writer.run()
+
+    if options.tgf:
+        writer = TgfWriter(
+                graph, output=options.filename, logger=logger)
+        writer.run()
+
+    if options.yed:
+        writer = YedWriter(
+                graph, output=options.filename, logger=logger)
+        writer.run()
+
+
+if __name__ == &#39;__main__&#39;:
+    main()</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="pyan.main.main"><code class="name flex">
+<span>def <span class="ident">main</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def main():
+    usage = &#34;&#34;&#34;usage: %prog FILENAME... [--dot|--tgf|--yed]&#34;&#34;&#34;
+    desc = (&#39;Analyse one or more Python source files and generate an&#39;
+            &#39;approximate call graph of the modules, classes and functions&#39;
+            &#39; within them.&#39;)
+    parser = OptionParser(usage=usage, description=desc)
+    parser.add_option(&#34;--dot&#34;,
+                      action=&#34;store_true&#34;, default=False,
+                      help=&#34;output in GraphViz dot format&#34;)
+    parser.add_option(&#34;--tgf&#34;,
+                      action=&#34;store_true&#34;, default=False,
+                      help=&#34;output in Trivial Graph Format&#34;)
+    parser.add_option(&#34;--yed&#34;,
+                      action=&#34;store_true&#34;, default=False,
+                      help=&#34;output in yEd GraphML Format&#34;)
+    parser.add_option(&#34;-f&#34;, &#34;--file&#34;, dest=&#34;filename&#34;,
+                      help=&#34;write graph to FILE&#34;, metavar=&#34;FILE&#34;, default=None)
+    parser.add_option(&#34;-l&#34;, &#34;--log&#34;, dest=&#34;logname&#34;,
+                      help=&#34;write log to LOG&#34;, metavar=&#34;LOG&#34;)
+    parser.add_option(&#34;-v&#34;, &#34;--verbose&#34;,
+                      action=&#34;store_true&#34;, default=False, dest=&#34;verbose&#34;,
+                      help=&#34;verbose output&#34;)
+    parser.add_option(&#34;-V&#34;, &#34;--very-verbose&#34;,
+                      action=&#34;store_true&#34;, default=False, dest=&#34;very_verbose&#34;,
+                      help=&#34;even more verbose output (mainly for debug)&#34;)
+    parser.add_option(&#34;-d&#34;, &#34;--defines&#34;,
+                      action=&#34;store_true&#34;, default=True, dest=&#34;draw_defines&#34;,
+                      help=&#34;add edges for &#39;defines&#39; relationships [default]&#34;)
+    parser.add_option(&#34;-n&#34;, &#34;--no-defines&#34;,
+                      action=&#34;store_false&#34;, default=True, dest=&#34;draw_defines&#34;,
+                      help=&#34;do not add edges for &#39;defines&#39; relationships&#34;)
+    parser.add_option(&#34;-u&#34;, &#34;--uses&#34;,
+                      action=&#34;store_true&#34;, default=True, dest=&#34;draw_uses&#34;,
+                      help=&#34;add edges for &#39;uses&#39; relationships [default]&#34;)
+    parser.add_option(&#34;-N&#34;, &#34;--no-uses&#34;,
+                      action=&#34;store_false&#34;, default=True, dest=&#34;draw_uses&#34;,
+                      help=&#34;do not add edges for &#39;uses&#39; relationships&#34;)
+    parser.add_option(&#34;-c&#34;, &#34;--colored&#34;,
+                      action=&#34;store_true&#34;, default=False, dest=&#34;colored&#34;,
+                      help=&#34;color nodes according to namespace [dot only]&#34;)
+    parser.add_option(&#34;-G&#34;, &#34;--grouped-alt&#34;,
+                      action=&#34;store_true&#34;, default=False, dest=&#34;grouped_alt&#34;,
+                      help=&#34;suggest grouping by adding invisible defines edges [only useful with --no-defines]&#34;)
+    parser.add_option(&#34;-g&#34;, &#34;--grouped&#34;,
+                      action=&#34;store_true&#34;, default=False, dest=&#34;grouped&#34;,
+                      help=&#34;group nodes (create subgraphs) according to namespace [dot only]&#34;)
+    parser.add_option(&#34;-e&#34;, &#34;--nested-groups&#34;,
+                      action=&#34;store_true&#34;, default=False, dest=&#34;nested_groups&#34;,
+                      help=&#34;create nested groups (subgraphs) for nested namespaces (implies -g) [dot only]&#34;)
+    parser.add_option(&#34;--dot-rankdir&#34;, default=&#34;TB&#34;, dest=&#34;rankdir&#34;,
+                      help=(
+                        &#34;specifies the dot graph &#39;rankdir&#39; property for &#34;
+                        &#34;controlling the direction of the graph. &#34;
+                        &#34;Allowed values: [&#39;TB&#39;, &#39;LR&#39;, &#39;BT&#39;, &#39;RL&#39;]. &#34;
+                        &#34;[dot only]&#34;))
+    parser.add_option(&#34;-a&#34;, &#34;--annotated&#34;,
+                      action=&#34;store_true&#34;, default=False, dest=&#34;annotated&#34;,
+                      help=&#34;annotate with module and source line number&#34;)
+
+    options, args = parser.parse_args()
+    filenames = [fn2 for fn in args for fn2 in glob(fn)]
+    if len(args) == 0:
+        parser.error(&#39;Need one or more filenames to process&#39;)
+
+    if options.nested_groups:
+        options.grouped = True
+
+    graph_options = {
+            &#39;draw_defines&#39;: options.draw_defines,
+            &#39;draw_uses&#39;: options.draw_uses,
+            &#39;colored&#39;: options.colored,
+            &#39;grouped_alt&#39; : options.grouped_alt,
+            &#39;grouped&#39;: options.grouped,
+            &#39;nested_groups&#39;: options.nested_groups,
+            &#39;annotated&#39;: options.annotated}
+
+    # TODO: use an int argument for verbosity
+    logger = logging.getLogger(__name__)
+    if options.very_verbose:
+        logger.setLevel(logging.DEBUG)
+    elif options.verbose:
+        logger.setLevel(logging.INFO)
+    else:
+        logger.setLevel(logging.WARN)
+    logger.addHandler(logging.StreamHandler())
+    if options.logname:
+        handler = logging.FileHandler(options.logname)
+        logger.addHandler(handler)
+
+    v = CallGraphVisitor(filenames, logger)
+    graph = VisualGraph.from_visitor(v, options=graph_options, logger=logger)
+
+    if options.dot:
+        writer = DotWriter(
+                graph,
+                options=[&#39;rankdir=&#39;+options.rankdir],
+                output=options.filename,
+                logger=logger)
+        writer.run()
+
+    if options.tgf:
+        writer = TgfWriter(
+                graph, output=options.filename, logger=logger)
+        writer.run()
+
+    if options.yed:
+        writer = YedWriter(
+                graph, output=options.filename, logger=logger)
+        writer.run()</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="pyan" href="index.html">pyan</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="pyan.main.main" href="#pyan.main.main">main</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.6.3</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>

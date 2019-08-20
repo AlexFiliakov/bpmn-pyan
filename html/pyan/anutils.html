@@ -1,0 +1,675 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.6.3" />
+<title>pyan.anutils API documentation</title>
+<meta name="description" content="Utilities for analyzer." />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{font-weight:bold}#index h4 + ul{margin-bottom:.6em}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase;cursor:pointer}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>pyan.anutils</code></h1>
+</header>
+<section id="section-intro">
+<p>Utilities for analyzer.</p>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+&#34;&#34;&#34;Utilities for analyzer.&#34;&#34;&#34;
+
+import os.path
+import ast
+from .node import Flavor
+
+def head(lst):
+    if len(lst):
+        return lst[0]
+
+def tail(lst):
+    if len(lst) &gt; 1:
+        return lst[1:]
+    else:
+        return []
+
+def get_module_name(filename):
+    &#34;&#34;&#34;Try to determine the full module name of a source file, by figuring out
+    if its directory looks like a package (i.e. has an __init__.py file).&#34;&#34;&#34;
+
+    if os.path.basename(filename) == &#39;__init__.py&#39;:
+        return get_module_name(os.path.dirname(filename))
+
+    init_path = os.path.join(os.path.dirname(filename), &#39;__init__.py&#39;)
+    mod_name = os.path.basename(filename).replace(&#39;.py&#39;, &#39;&#39;)
+
+    if not os.path.exists(init_path):
+        return mod_name
+
+    if not os.path.dirname(filename):
+        return mod_name
+
+    return get_module_name(os.path.dirname(filename)) + &#39;.&#39; + mod_name
+
+def format_alias(x):
+    &#34;&#34;&#34;Return human-readable description of an ast.alias (used in Import and ImportFrom nodes).&#34;&#34;&#34;
+    if not isinstance(x, ast.alias):
+        raise TypeError(&#34;Can only format an ast.alias; got %s&#34; % type(x))
+
+    if x.asname is not None:
+        return &#34;%s as %s&#34; % (x.name, x.asname)
+    else:
+        return &#34;%s&#34; % (x.name)
+
+def get_ast_node_name(x):
+    &#34;&#34;&#34;Return human-readable name of ast.Attribute or ast.Name. Pass through anything else.&#34;&#34;&#34;
+    if isinstance(x, ast.Attribute):
+        # x.value might also be an ast.Attribute (think &#34;x.y.z&#34;)
+        return &#34;%s.%s&#34; % (get_ast_node_name(x.value), x.attr)
+    elif isinstance(x, ast.Name):
+        return x.id
+    else:
+        return x
+
+# Helper for handling binding forms.
+def sanitize_exprs(exprs):
+    &#34;&#34;&#34;Convert ast.Tuples in exprs to Python tuples; wrap result in a Python tuple.&#34;&#34;&#34;
+    def process(expr):
+        if isinstance(expr, (ast.Tuple, ast.List)):
+            return expr.elts  # .elts is a Python tuple
+        else:
+            return [expr]
+    if isinstance(exprs, (tuple, list)):
+        return [process(expr) for expr in exprs]
+    else:
+        return process(exprs)
+
+def resolve_method_resolution_order(class_base_nodes, logger):
+    &#34;&#34;&#34;Compute the method resolution order (MRO) for each of the analyzed classes.
+
+    class_base_nodes: dict cls: [base1, base2, ..., baseN]
+                      where dict and basej are all Node objects.
+    &#34;&#34;&#34;
+
+    # https://en.wikipedia.org/wiki/C3_linearization#Description
+
+    class LinearizationImpossible(Exception):
+        pass
+
+    from functools import reduce
+    from operator import add
+    def C3_find_good_head(heads, tails):  # find an element of heads which is not in any of the tails
+        flat_tails = reduce(add, tails, [])  # flatten the outer level
+        for hd in heads:
+            if hd not in flat_tails:
+                break
+        else:  # no break only if there are cyclic dependencies.
+            raise LinearizationImpossible(&#34;MRO linearization impossible; cyclic dependency detected. heads: %s, tails: %s&#34; % (heads, tails))
+        return hd
+
+    def remove_all(elt, lst):  # remove all occurrences of elt from lst, return a copy
+        return [x for x in lst if x != elt]
+    def remove_all_in(elt, lists):  # remove elt from all lists, return a copy
+        return [remove_all(elt, lst) for lst in lists]
+
+    def C3_merge(lists):
+        out = []
+        while True:
+            logger.debug(&#34;MRO: C3 merge: out: %s, lists: %s&#34; % (out, lists))
+            heads = [head(lst) for lst in lists if head(lst) is not None]
+            if not len(heads):
+                break
+            tails = [tail(lst) for lst in lists]
+            logger.debug(&#34;MRO: C3 merge: heads: %s, tails: %s&#34; % (heads, tails))
+            hd = C3_find_good_head(heads, tails)
+            logger.debug(&#34;MRO: C3 merge: chose head %s&#34; % (hd))
+            out.append(hd)
+            lists = remove_all_in(hd, lists)
+        return out
+
+    mro = {}  # result
+    try:
+        memo = {}  # caching/memoization
+        def C3_linearize(node):
+            logger.debug(&#34;MRO: C3 linearizing %s&#34; % (node))
+            seen.add(node)
+            if node not in memo:
+                #  unknown class                     or no ancestors
+                if node not in class_base_nodes or not len(class_base_nodes[node]):
+                    memo[node] = [node]
+                else:  # known and has ancestors
+                    lists = []
+                    # linearization of parents...
+                    for baseclass_node in class_base_nodes[node]:
+                        if baseclass_node not in seen:
+                            lists.append(C3_linearize(baseclass_node))
+                    # ...and the parents themselves (in the order they appear in the ClassDef)
+                    logger.debug(&#34;MRO: parents of %s: %s&#34; % (node, class_base_nodes[node]))
+                    lists.append(class_base_nodes[node])
+                    logger.debug(&#34;MRO: C3 merging %s&#34; % (lists))
+                    memo[node] = [node] + C3_merge(lists)
+            logger.debug(&#34;MRO: C3 linearized %s, result %s&#34; % (node, memo[node]))
+            return memo[node]
+        for node in class_base_nodes:
+            logger.debug(&#34;MRO: analyzing class %s&#34; % (node))
+            seen = set()  # break cycles (separately for each class we start from)
+            mro[node] = C3_linearize(node)
+    except LinearizationImpossible as e:
+        logger.error(e)
+
+        # generic fallback: depth-first search of lists of ancestors
+        #
+        # (so that we can try to draw *something* if the code to be
+        #  analyzed is so badly formed that the MRO algorithm fails)
+
+        memo = {}  # caching/memoization
+        def lookup_bases_recursive(node):
+            seen.add(node)
+            if node not in memo:
+                out = [node]  # first look up in obj itself...
+                if node in class_base_nodes:  # known class?
+                    for baseclass_node in class_base_nodes[node]:  # ...then in its bases
+                        if baseclass_node not in seen:
+                            out.append(baseclass_node)
+                            out.extend(lookup_bases_recursive(baseclass_node))
+                memo[node] = out
+            return memo[node]
+
+        mro = {}
+        for node in class_base_nodes:
+            logger.debug(&#34;MRO: generic fallback: analyzing class %s&#34; % (node))
+            seen = set()  # break cycles (separately for each class we start from)
+            mro[node] = lookup_bases_recursive(node)
+
+    return mro
+
+class UnresolvedSuperCallError(Exception):
+    &#34;&#34;&#34;For specifically signaling an unresolved super().&#34;&#34;&#34;
+    pass
+
+class Scope:
+    &#34;&#34;&#34;Adaptor that makes scopes look somewhat like those from the Python 2
+    compiler module, as far as Pyan&#39;s CallGraphVisitor is concerned.&#34;&#34;&#34;
+
+    def __init__(self, table):
+        &#34;&#34;&#34;table: SymTable instance from symtable.symtable()&#34;&#34;&#34;
+        name = table.get_name()
+        if name == &#39;top&#39;:
+            name = &#39;&#39;  # Pyan defines the top level as anonymous
+        self.name = name
+        self.type = table.get_type()  # useful for __repr__()
+        self.defs = {iden:None for iden in table.get_identifiers()}  # name:assigned_value
+
+    def __repr__(self):
+        return &#34;&lt;Scope: %s %s&gt;&#34; % (self.type, self.name)
+
+# A context manager, sort of a friend of CallGraphVisitor (depends on implementation details)
+class ExecuteInInnerScope:
+    &#34;&#34;&#34;Execute a code block with the scope stack augmented with an inner scope.
+
+    Used to analyze lambda, listcomp et al. The scope must still be present in
+    analyzer.scopes.
+
+    !!!
+    Will add a defines edge from the current namespace to the inner scope,
+    marking both nodes as defined.
+    !!!
+    &#34;&#34;&#34;
+
+    def __init__(self, analyzer, scopename):
+        &#34;&#34;&#34;analyzer: CallGraphVisitor instance
+        scopename: name of the inner scope&#34;&#34;&#34;
+        self.analyzer = analyzer
+        self.scopename = scopename
+
+    def __enter__(self):
+        # The inner scopes pollute the graph too much; we will need to collapse
+        # them in postprocessing. However, we must use them during analysis to
+        # follow the Python 3 scoping rules correctly.
+
+        analyzer = self.analyzer
+        scopename = self.scopename
+
+        analyzer.name_stack.append(scopename)
+        inner_ns = analyzer.get_node_of_current_namespace().get_name()
+        if inner_ns not in analyzer.scopes:
+            analyzer.name_stack.pop()
+            raise ValueError(&#34;Unknown scope &#39;%s&#39;&#34; % (inner_ns))
+        analyzer.scope_stack.append(analyzer.scopes[inner_ns])
+        analyzer.context_stack.append(scopename)
+
+        return self
+
+    def __exit__(self, errtype, errvalue, traceback):
+        # TODO: do we need some error handling here?
+        analyzer = self.analyzer
+        scopename = self.scopename
+
+        analyzer.context_stack.pop()
+        analyzer.scope_stack.pop()
+        analyzer.name_stack.pop()
+
+        # Add a defines edge, which will mark the inner scope as defined,
+        # allowing any uses to other objects from inside the lambda/listcomp/etc.
+        # body to be visualized.
+        #
+        # All inner scopes of the same scopename (lambda, listcomp, ...) in the
+        # current ns will be grouped into a single node, as they have no name.
+        # We create a namespace-like node that has no associated AST node,
+        # as it does not represent any unique AST node.
+        from_node = analyzer.get_node_of_current_namespace()
+        ns = from_node.get_name()
+        to_node = analyzer.get_node(ns, scopename, None, flavor=Flavor.NAMESPACE)
+        if analyzer.add_defines_edge(from_node, to_node):
+            analyzer.logger.info(&#34;Def from %s to %s %s&#34; % (from_node, scopename, to_node))
+        analyzer.last_value = to_node  # Make this inner scope node assignable to track its uses.</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="pyan.anutils.format_alias"><code class="name flex">
+<span>def <span class="ident">format_alias</span></span>(<span>x)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Return human-readable description of an ast.alias (used in Import and ImportFrom nodes).</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def format_alias(x):
+    &#34;&#34;&#34;Return human-readable description of an ast.alias (used in Import and ImportFrom nodes).&#34;&#34;&#34;
+    if not isinstance(x, ast.alias):
+        raise TypeError(&#34;Can only format an ast.alias; got %s&#34; % type(x))
+
+    if x.asname is not None:
+        return &#34;%s as %s&#34; % (x.name, x.asname)
+    else:
+        return &#34;%s&#34; % (x.name)</code></pre>
+</details>
+</dd>
+<dt id="pyan.anutils.get_ast_node_name"><code class="name flex">
+<span>def <span class="ident">get_ast_node_name</span></span>(<span>x)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Return human-readable name of ast.Attribute or ast.Name. Pass through anything else.</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def get_ast_node_name(x):
+    &#34;&#34;&#34;Return human-readable name of ast.Attribute or ast.Name. Pass through anything else.&#34;&#34;&#34;
+    if isinstance(x, ast.Attribute):
+        # x.value might also be an ast.Attribute (think &#34;x.y.z&#34;)
+        return &#34;%s.%s&#34; % (get_ast_node_name(x.value), x.attr)
+    elif isinstance(x, ast.Name):
+        return x.id
+    else:
+        return x</code></pre>
+</details>
+</dd>
+<dt id="pyan.anutils.get_module_name"><code class="name flex">
+<span>def <span class="ident">get_module_name</span></span>(<span>filename)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Try to determine the full module name of a source file, by figuring out
+if its directory looks like a package (i.e. has an <strong>init</strong>.py file).</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def get_module_name(filename):
+    &#34;&#34;&#34;Try to determine the full module name of a source file, by figuring out
+    if its directory looks like a package (i.e. has an __init__.py file).&#34;&#34;&#34;
+
+    if os.path.basename(filename) == &#39;__init__.py&#39;:
+        return get_module_name(os.path.dirname(filename))
+
+    init_path = os.path.join(os.path.dirname(filename), &#39;__init__.py&#39;)
+    mod_name = os.path.basename(filename).replace(&#39;.py&#39;, &#39;&#39;)
+
+    if not os.path.exists(init_path):
+        return mod_name
+
+    if not os.path.dirname(filename):
+        return mod_name
+
+    return get_module_name(os.path.dirname(filename)) + &#39;.&#39; + mod_name</code></pre>
+</details>
+</dd>
+<dt id="pyan.anutils.head"><code class="name flex">
+<span>def <span class="ident">head</span></span>(<span>lst)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def head(lst):
+    if len(lst):
+        return lst[0]</code></pre>
+</details>
+</dd>
+<dt id="pyan.anutils.resolve_method_resolution_order"><code class="name flex">
+<span>def <span class="ident">resolve_method_resolution_order</span></span>(<span>class_base_nodes, logger)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Compute the method resolution order (MRO) for each of the analyzed classes.</p>
+<p>class_base_nodes: dict cls: [base1, base2, &hellip;, baseN]
+where dict and basej are all Node objects.</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def resolve_method_resolution_order(class_base_nodes, logger):
+    &#34;&#34;&#34;Compute the method resolution order (MRO) for each of the analyzed classes.
+
+    class_base_nodes: dict cls: [base1, base2, ..., baseN]
+                      where dict and basej are all Node objects.
+    &#34;&#34;&#34;
+
+    # https://en.wikipedia.org/wiki/C3_linearization#Description
+
+    class LinearizationImpossible(Exception):
+        pass
+
+    from functools import reduce
+    from operator import add
+    def C3_find_good_head(heads, tails):  # find an element of heads which is not in any of the tails
+        flat_tails = reduce(add, tails, [])  # flatten the outer level
+        for hd in heads:
+            if hd not in flat_tails:
+                break
+        else:  # no break only if there are cyclic dependencies.
+            raise LinearizationImpossible(&#34;MRO linearization impossible; cyclic dependency detected. heads: %s, tails: %s&#34; % (heads, tails))
+        return hd
+
+    def remove_all(elt, lst):  # remove all occurrences of elt from lst, return a copy
+        return [x for x in lst if x != elt]
+    def remove_all_in(elt, lists):  # remove elt from all lists, return a copy
+        return [remove_all(elt, lst) for lst in lists]
+
+    def C3_merge(lists):
+        out = []
+        while True:
+            logger.debug(&#34;MRO: C3 merge: out: %s, lists: %s&#34; % (out, lists))
+            heads = [head(lst) for lst in lists if head(lst) is not None]
+            if not len(heads):
+                break
+            tails = [tail(lst) for lst in lists]
+            logger.debug(&#34;MRO: C3 merge: heads: %s, tails: %s&#34; % (heads, tails))
+            hd = C3_find_good_head(heads, tails)
+            logger.debug(&#34;MRO: C3 merge: chose head %s&#34; % (hd))
+            out.append(hd)
+            lists = remove_all_in(hd, lists)
+        return out
+
+    mro = {}  # result
+    try:
+        memo = {}  # caching/memoization
+        def C3_linearize(node):
+            logger.debug(&#34;MRO: C3 linearizing %s&#34; % (node))
+            seen.add(node)
+            if node not in memo:
+                #  unknown class                     or no ancestors
+                if node not in class_base_nodes or not len(class_base_nodes[node]):
+                    memo[node] = [node]
+                else:  # known and has ancestors
+                    lists = []
+                    # linearization of parents...
+                    for baseclass_node in class_base_nodes[node]:
+                        if baseclass_node not in seen:
+                            lists.append(C3_linearize(baseclass_node))
+                    # ...and the parents themselves (in the order they appear in the ClassDef)
+                    logger.debug(&#34;MRO: parents of %s: %s&#34; % (node, class_base_nodes[node]))
+                    lists.append(class_base_nodes[node])
+                    logger.debug(&#34;MRO: C3 merging %s&#34; % (lists))
+                    memo[node] = [node] + C3_merge(lists)
+            logger.debug(&#34;MRO: C3 linearized %s, result %s&#34; % (node, memo[node]))
+            return memo[node]
+        for node in class_base_nodes:
+            logger.debug(&#34;MRO: analyzing class %s&#34; % (node))
+            seen = set()  # break cycles (separately for each class we start from)
+            mro[node] = C3_linearize(node)
+    except LinearizationImpossible as e:
+        logger.error(e)
+
+        # generic fallback: depth-first search of lists of ancestors
+        #
+        # (so that we can try to draw *something* if the code to be
+        #  analyzed is so badly formed that the MRO algorithm fails)
+
+        memo = {}  # caching/memoization
+        def lookup_bases_recursive(node):
+            seen.add(node)
+            if node not in memo:
+                out = [node]  # first look up in obj itself...
+                if node in class_base_nodes:  # known class?
+                    for baseclass_node in class_base_nodes[node]:  # ...then in its bases
+                        if baseclass_node not in seen:
+                            out.append(baseclass_node)
+                            out.extend(lookup_bases_recursive(baseclass_node))
+                memo[node] = out
+            return memo[node]
+
+        mro = {}
+        for node in class_base_nodes:
+            logger.debug(&#34;MRO: generic fallback: analyzing class %s&#34; % (node))
+            seen = set()  # break cycles (separately for each class we start from)
+            mro[node] = lookup_bases_recursive(node)
+
+    return mro</code></pre>
+</details>
+</dd>
+<dt id="pyan.anutils.sanitize_exprs"><code class="name flex">
+<span>def <span class="ident">sanitize_exprs</span></span>(<span>exprs)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Convert ast.Tuples in exprs to Python tuples; wrap result in a Python tuple.</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def sanitize_exprs(exprs):
+    &#34;&#34;&#34;Convert ast.Tuples in exprs to Python tuples; wrap result in a Python tuple.&#34;&#34;&#34;
+    def process(expr):
+        if isinstance(expr, (ast.Tuple, ast.List)):
+            return expr.elts  # .elts is a Python tuple
+        else:
+            return [expr]
+    if isinstance(exprs, (tuple, list)):
+        return [process(expr) for expr in exprs]
+    else:
+        return process(exprs)</code></pre>
+</details>
+</dd>
+<dt id="pyan.anutils.tail"><code class="name flex">
+<span>def <span class="ident">tail</span></span>(<span>lst)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def tail(lst):
+    if len(lst) &gt; 1:
+        return lst[1:]
+    else:
+        return []</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="pyan.anutils.ExecuteInInnerScope"><code class="flex name class">
+<span>class <span class="ident">ExecuteInInnerScope</span></span>
+<span>(</span><span>analyzer, scopename)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Execute a code block with the scope stack augmented with an inner scope.</p>
+<p>Used to analyze lambda, listcomp et al. The scope must still be present in
+analyzer.scopes.</p>
+<p>!!!
+Will add a defines edge from the current namespace to the inner scope,
+marking both nodes as defined.
+!!!</p>
+<p>analyzer: CallGraphVisitor instance
+scopename: name of the inner scope</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">class ExecuteInInnerScope:
+    &#34;&#34;&#34;Execute a code block with the scope stack augmented with an inner scope.
+
+    Used to analyze lambda, listcomp et al. The scope must still be present in
+    analyzer.scopes.
+
+    !!!
+    Will add a defines edge from the current namespace to the inner scope,
+    marking both nodes as defined.
+    !!!
+    &#34;&#34;&#34;
+
+    def __init__(self, analyzer, scopename):
+        &#34;&#34;&#34;analyzer: CallGraphVisitor instance
+        scopename: name of the inner scope&#34;&#34;&#34;
+        self.analyzer = analyzer
+        self.scopename = scopename
+
+    def __enter__(self):
+        # The inner scopes pollute the graph too much; we will need to collapse
+        # them in postprocessing. However, we must use them during analysis to
+        # follow the Python 3 scoping rules correctly.
+
+        analyzer = self.analyzer
+        scopename = self.scopename
+
+        analyzer.name_stack.append(scopename)
+        inner_ns = analyzer.get_node_of_current_namespace().get_name()
+        if inner_ns not in analyzer.scopes:
+            analyzer.name_stack.pop()
+            raise ValueError(&#34;Unknown scope &#39;%s&#39;&#34; % (inner_ns))
+        analyzer.scope_stack.append(analyzer.scopes[inner_ns])
+        analyzer.context_stack.append(scopename)
+
+        return self
+
+    def __exit__(self, errtype, errvalue, traceback):
+        # TODO: do we need some error handling here?
+        analyzer = self.analyzer
+        scopename = self.scopename
+
+        analyzer.context_stack.pop()
+        analyzer.scope_stack.pop()
+        analyzer.name_stack.pop()
+
+        # Add a defines edge, which will mark the inner scope as defined,
+        # allowing any uses to other objects from inside the lambda/listcomp/etc.
+        # body to be visualized.
+        #
+        # All inner scopes of the same scopename (lambda, listcomp, ...) in the
+        # current ns will be grouped into a single node, as they have no name.
+        # We create a namespace-like node that has no associated AST node,
+        # as it does not represent any unique AST node.
+        from_node = analyzer.get_node_of_current_namespace()
+        ns = from_node.get_name()
+        to_node = analyzer.get_node(ns, scopename, None, flavor=Flavor.NAMESPACE)
+        if analyzer.add_defines_edge(from_node, to_node):
+            analyzer.logger.info(&#34;Def from %s to %s %s&#34; % (from_node, scopename, to_node))
+        analyzer.last_value = to_node  # Make this inner scope node assignable to track its uses.</code></pre>
+</details>
+</dd>
+<dt id="pyan.anutils.Scope"><code class="flex name class">
+<span>class <span class="ident">Scope</span></span>
+<span>(</span><span>table)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Adaptor that makes scopes look somewhat like those from the Python 2
+compiler module, as far as Pyan's CallGraphVisitor is concerned.</p>
+<p>table: SymTable instance from symtable.symtable()</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">class Scope:
+    &#34;&#34;&#34;Adaptor that makes scopes look somewhat like those from the Python 2
+    compiler module, as far as Pyan&#39;s CallGraphVisitor is concerned.&#34;&#34;&#34;
+
+    def __init__(self, table):
+        &#34;&#34;&#34;table: SymTable instance from symtable.symtable()&#34;&#34;&#34;
+        name = table.get_name()
+        if name == &#39;top&#39;:
+            name = &#39;&#39;  # Pyan defines the top level as anonymous
+        self.name = name
+        self.type = table.get_type()  # useful for __repr__()
+        self.defs = {iden:None for iden in table.get_identifiers()}  # name:assigned_value
+
+    def __repr__(self):
+        return &#34;&lt;Scope: %s %s&gt;&#34; % (self.type, self.name)</code></pre>
+</details>
+</dd>
+<dt id="pyan.anutils.UnresolvedSuperCallError"><code class="flex name class">
+<span>class <span class="ident">UnresolvedSuperCallError</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>For specifically signaling an unresolved super().</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">class UnresolvedSuperCallError(Exception):
+    &#34;&#34;&#34;For specifically signaling an unresolved super().&#34;&#34;&#34;
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="pyan" href="index.html">pyan</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="pyan.anutils.format_alias" href="#pyan.anutils.format_alias">format_alias</a></code></li>
+<li><code><a title="pyan.anutils.get_ast_node_name" href="#pyan.anutils.get_ast_node_name">get_ast_node_name</a></code></li>
+<li><code><a title="pyan.anutils.get_module_name" href="#pyan.anutils.get_module_name">get_module_name</a></code></li>
+<li><code><a title="pyan.anutils.head" href="#pyan.anutils.head">head</a></code></li>
+<li><code><a title="pyan.anutils.resolve_method_resolution_order" href="#pyan.anutils.resolve_method_resolution_order">resolve_method_resolution_order</a></code></li>
+<li><code><a title="pyan.anutils.sanitize_exprs" href="#pyan.anutils.sanitize_exprs">sanitize_exprs</a></code></li>
+<li><code><a title="pyan.anutils.tail" href="#pyan.anutils.tail">tail</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="pyan.anutils.ExecuteInInnerScope" href="#pyan.anutils.ExecuteInInnerScope">ExecuteInInnerScope</a></code></h4>
+</li>
+<li>
+<h4><code><a title="pyan.anutils.Scope" href="#pyan.anutils.Scope">Scope</a></code></h4>
+</li>
+<li>
+<h4><code><a title="pyan.anutils.UnresolvedSuperCallError" href="#pyan.anutils.UnresolvedSuperCallError">UnresolvedSuperCallError</a></code></h4>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.6.3</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>
